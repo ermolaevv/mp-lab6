@@ -13,8 +13,9 @@ template <class Key, class Value>
 class VectorTable : public Table<Key,Value> {
 protected:
     std::vector<typename Table<Key, Value>::template STableRec<Key, Value>> data;
+    size_t position = 0;
 public:
-    VectorTable(size_t maxSize = 10000) : Table<Key, Value>(maxSize) { }
+    VectorTable(size_t maxSize = 10000) : Table<Key, Value>(maxSize), position(0) { }
     ~VectorTable() { }
 
 #pragma region Info Methods
