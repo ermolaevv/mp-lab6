@@ -5,6 +5,7 @@
 #include <list>
 
 #include "Table.h"
+#include "DatList.h"
 
 /// <summary>
 /// Линейная таблица на списке.
@@ -12,7 +13,7 @@
 template <class Key, class Value>
 class ListTable : public Table<Key,Value> {
 protected:
-    std::list<typename Table<Key, Value>::template STableRec<Key, Value>> data;
+    TDatList<typename Table<Key, Value>::template STableRec<Key, Value>> data;
 public:
     ListTable(size_t maxSize = 10000) : Table<Key, Value>(maxSize) { }
     ~ListTable() { }
