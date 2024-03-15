@@ -1,3 +1,3 @@
 #include <gtest.h>
-#include "VectorTable.h"
+#include "OrderedTable.h"
 using namespace std;
