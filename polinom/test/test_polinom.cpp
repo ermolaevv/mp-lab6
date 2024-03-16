@@ -1,4 +1,4 @@
-#include <gtest.h>
+#include <gtest/gtest.h>
 #include "Polinom.h"
 using namespace std;
 
@@ -119,4 +119,20 @@ TEST(TPolinom, test5)
     Q = P * -1.0;
 
 	ASSERT_EQ(res, P + Q);
+}
+
+TEST(TPolinom, Calculate_test)
+{
+	TPolinom P;
+	
+	int deg1[] = {2, 1, 1};
+	int deg2[] = {1, 1, 2};
+	int deg3[] = {1, 2, 1};
+
+	P.AddMonom(TMonom(3, 3, deg1));
+	P.AddMonom(TMonom(-5, 3, deg2));
+    P.AddMonom(TMonom(7, 3, deg3));
+
+    double values[] = { 2, 3, 4 };
+    ASSERT_EQ(168, round(P.Calculate(3, values) * 100) / 100);
 }

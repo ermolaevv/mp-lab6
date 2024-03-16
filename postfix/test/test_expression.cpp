@@ -1,10 +1,10 @@
+#include <gtest/gtest.h>
 #include "MyExpression.h"
-#include <gtest.h>
 using namespace std;
 
 TEST(TArithmeticExpression, not_a_word_in_Russian)
 {
-	string expr = "¸";
+	string expr = "Ñ‘";
 	ASSERT_ANY_THROW(TArithmeticExpression expression(expr));
 }
 TEST(TArithmeticExpression, can_get_operands)
@@ -29,7 +29,7 @@ TEST(TArithmeticExpression, can_get_infix)
 }
 TEST(TArithmeticExpression, can_get_postfix)
 {
-	string expr = "a+b";
+	string expr = "a + b";
 	TArithmeticExpression expression(expr);
 
 	string str = "a b + ";
@@ -111,6 +111,14 @@ TEST(TArithmeticExpression, unary_minus)
 
 	map<string, double> values;
 	EXPECT_EQ(-1, expression.Calculate(values));
+}
+TEST(TArithmeticExpression, pow)
+{
+	string expr = "5*2^2";
+	TArithmeticExpression expression(expr);
+
+	map<string, double> values;
+	EXPECT_EQ(20, expression.Calculate(values));
 }
 TEST(TArithmeticExpression, multicharacter_lexem)
 {
