@@ -5,7 +5,7 @@
 #include <list>
 
 #include "Table.h"
-#include "DatList.h"
+#include "HeadRing.h"
 
 /// <summary>
 /// Линейная таблица на списке.
@@ -13,7 +13,7 @@
 template <class Key, class Value>
 class ListTable : public Table<Key,Value> {
 protected:
-    TDatList<typename Table<Key, Value>::template STableRec<Key, Value>> data;
+    THeadRing<typename Table<Key, Value>::template STableRec<Key, Value>> data;
 public:
     ListTable(size_t maxSize = 10000) : Table<Key, Value>(maxSize) { }
     ~ListTable() { }
@@ -22,19 +22,19 @@ public:
     /// <summary>
     /// Возращает количество записей (длину таблицы).
     /// </summary>
-    size_t GetDataCount() const noexcept override { return data.size(); }
+    size_t GetDataCount() const noexcept override { return data.GetLength(); }
 
     /// <summary>
     /// Проверка таблицы на пустоту.
     /// Если длина таблицы равна нулю, возвращает true.
     /// </summary>
-    bool IsEmpty() const noexcept override { return data.size() == 0; }
+    bool IsEmpty() const noexcept override { return data.GetLength() == 0; }
 
     /// <summary>
     /// Проверка таблицы на заполненность.
     /// Если длина таблицы равна maxSize, возвращает true.
     /// </summary>
-    bool IsFull() const noexcept override { return data.size() == this->maxSize; };
+    bool IsFull() const noexcept override { return data.GetLength() == this->maxSize; };
 #pragma endregion
 
 #pragma region Main Methods
@@ -59,6 +59,13 @@ public:
 #pragma endregion
 
 #pragma region Navigate
+
+    /// <summary>
+    /// Устанавливает текущую позицию на первую запись
+    /// Возвращает 0
+    /// </summary>
+    virtual size_t Reset(void) noexcept override;
+
     /// <summary>
     /// Проверка окончания таблицы.
     /// Если таблица кончилась, то возращает true.

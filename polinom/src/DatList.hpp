@@ -101,7 +101,8 @@ int TDatList<T>::Reset(void)
 template<class T>
 int TDatList<T>::IsListEnded(void) const
 {
-	return pCurrLink->pNext == pStop;
+    if (pCurrLink == NULL) return NULL;
+	return pCurrLink == pStop;
 }
 
 template<class T>

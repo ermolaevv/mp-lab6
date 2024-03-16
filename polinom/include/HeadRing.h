@@ -18,7 +18,9 @@ public:
 	int GoNext(void) override;
 	void InsCurrent(T* pVal) override;
 	void InsLast(T* pVal) override;
-	void DelList(void) override; 
+	void DelList(void) override;
+    int IsListEnded(void) const override;
+
 	THeadRing& operator=(const THeadRing& q);
 };
 
