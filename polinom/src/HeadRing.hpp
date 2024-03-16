@@ -84,8 +84,8 @@ void THeadRing<T>::DelList(void)
 template<class T>
 int THeadRing<T>::IsListEnded(void) const
 {
-    if (pCurrLink == NULL) return NULL;
-    return pPrevLink == pHead;
+    if (this->pCurrLink == NULL) return NULL;
+    return this->pPrevLink == pHead;
 }
 
 template<class T>
