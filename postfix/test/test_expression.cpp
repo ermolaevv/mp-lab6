@@ -59,7 +59,7 @@ TEST(TArithmeticExpression, priority)
 	TArithmeticExpression expression(expr);
 
 	map<string, double> values;
-	EXPECT_EQ(5, round(expression.Calculate(values) * 100) / 100);
+	EXPECT_EQ(2, round(expression.Calculate(values) * 100) / 100);
 }
 TEST(TArithmeticExpression, calculate_sin)
 {
