@@ -6,7 +6,7 @@
 
 #include "HeadRing.h"
 #include "Monom.h"
-#include "MyExpression.h"
+#include "../../postfix/include/MyExpression.h"
 
 class TPolinom : public THeadRing<TMonom> {
 protected:
@@ -32,6 +32,8 @@ public:
 	TPolinom operator*(const double coef);
 	TPolinom operator*(const TMonom& coef);
 	TPolinom operator*(const TPolinom& other);
+
+    TPolinom Integrate() const;
 
 	TPolinom& operator=(const TPolinom& q); // присваивание
 	bool operator==(const TPolinom& other) const;
@@ -333,6 +335,18 @@ TPolinom& TPolinom::operator-=(const TPolinom& q)
 std::ostream& operator<<(std::ostream& ostr, TPolinom& q)
 {
     return ostr << q.ToString();
+}
+
+TPolinom TPolinom::Integrate() const {
+    TPolinom res(countVar);
+    TDatLink<TMonom>* tmp = pFirst;
+    while (tmp != pHead) {
+        const TMonom* monom = tmp->GetDatValue();
+        TMonom integrate_monom = monom->Integrate_Monom();
+        res.AddMonom(integrate_monom);
+        tmp = tmp->GetNextDatLink();
+    }
+    return res;
 }
 
 #endif

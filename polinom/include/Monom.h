@@ -41,6 +41,8 @@ public:
 	
 	TMonom& operator=(const TMonom& tm);
 
+    TMonom Integrate_Monom() const;
+
 	bool operator==(const TMonom& tm) const;
 	int operator<(const TMonom& mon);
 	int operator<(const TMonom& mon) const;
@@ -349,6 +351,15 @@ bool TMonom::operator==(const TMonom& mon) const
     if (!std::equal(Deg, Deg + CountDeg, mon.Deg))
         return false;
     return true;
+}
+
+TMonom TMonom::Integrate_Monom() const {
+    double new_Coeff = Coeff / (CountDeg + 1);
+    int* new_Deg = new int[CountDeg];
+    for (int i = 0; i < CountDeg; i++) {
+        new_Deg[i] = Deg[i] + 1;
+    }
+    return TMonom(new_Coeff, CountDeg, new_Deg);
 }
 
 
