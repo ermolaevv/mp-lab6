@@ -141,29 +141,34 @@ TEST(TPolinom, Calculate_test)
 
 
 TEST(TPolinom, IntegrateTest) {
-    int deg[] = { 2, 1, 3 }; 
-    TMonom monom(5.0, 3, deg);
-
-    TMonom integrated_monom = monom.Integrate_Monom(1);
-
-    double expected_coeff = 5.0 / 2; 
-    int expected_deg[] = { 2, 2, 3 }; 
-    TMonom expected_monom(expected_coeff, 3, expected_deg);
-
-    ASSERT_EQ(integrated_monom, expected_monom);
+    TPolinom P;
+    int deg1[] = { 3, 1, 0 };
+    int deg2[] = { 1, 2, 2 };
+    P.AddMonom(TMonom(4, 3, deg1)); // 4*x0^3*x1
+    P.AddMonom(TMonom(-3, 3, deg2)); // -3*x0*x1^2*x2^2
+    TPolinom integrated_P = P.Integrate(1); 
+    EXPECT_EQ("2*x0^3*x1^2 - 1*x0*x1^3*x2^2", integrated_P.ToString());
 }
 
 
-TEST(TPolinomTest, DifferentiationTest) {
-    int deg[] = { 2, 1, 3 }; 
-    TMonom monom(5.0, 3, deg);
-
-    TMonom diff_monom = monom.Differentiation_Monom(1);
-
-    double expected_coeff = 5.0 * 1; 
-    int expected_deg[] = { 2, 0, 3 }; 
-    TMonom expected_monom(expected_coeff, 3, expected_deg);
-
-    ASSERT_EQ(diff_monom, expected_monom);
+TEST(TPolinom, DifferentiationTest) {
+    TPolinom P;
+    int deg1[] = { 3, 1, 0 };
+    int deg2[] = { 1, 2, 2 };
+    P.AddMonom(TMonom(4, 3, deg1)); // 4*x0^3*x1
+    P.AddMonom(TMonom(-3, 3, deg2)); // -3*x0*x1^2*x2^2
+    TPolinom diff_P = P.Differentiation(1); 
+    EXPECT_EQ("4*x0^3 - 6*x0*x1*x2^2", diff_P.ToString());
 }
 
+
+
+TEST(TPolinom, CalculateDefiniteIntegralTest) {
+    TPolinom P(3); 
+    int deg[] = { 2, 0, 0 };
+    P.AddMonom(TMonom(3, 3, deg)); 
+    double start[] = { 0, 0, 0 }; 
+    double end[] = { 1, 0, 0 }; 
+    double integral = P.CalculateDefiniteIntegral(0, start, end); 
+    EXPECT_DOUBLE_EQ(1.0, integral); 
+}

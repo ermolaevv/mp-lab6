@@ -372,6 +372,7 @@ TMonom TMonom::Differentiation_Monom(int variable) const {
     if (variable >= CountDeg) { throw std::invalid_argument("Incorrect variable number"); }
 
     double new_Coeff = Coeff * Deg[variable];
+  
     int* new_Deg = new int[CountDeg];
     for (int i = 0; i < CountDeg; i++) {
         new_Deg[i] = Deg[i];
