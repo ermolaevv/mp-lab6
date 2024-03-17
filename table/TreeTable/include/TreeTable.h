@@ -1,56 +1,79 @@
-#ifndef _TABLE_TABLE_
-#define _TABLE_TABLE_
+#ifndef _TABLE_TREETABLE_
+#define _TABLE_TREETABLE_
 
 #include <iostream>
+#include "Table.h"
 
 /// <summary>
-/// Базовый класс таблиц. Абстрактный класс.
+/// Базовый класс таблиц на деревьях. Абстрактный класс.
 /// </summary>
 template <class Key, class Value>
-class Table {
+class TreeTable : Table<Key, Value> {
 protected:
     /// <summary>
-    /// Шаблонная стркутура табличной записи.
+    /// Шаблонная стркутура узла дерева.
     /// </summary>
     template <class Key, class Value>
-    struct STableRec {
-        Key key;
-        Value value;
-        STableRec(Key key, Value value) {
-            this->key = key;
-            this->value = value;
-        }
+    struct SNode : Table<Key, Value>::STableRec<Key, Value> {
+        SNode* pLeft = nullptr;
+        SNode* pRight = nullptr;
+        SNode(Key key, Value value) : STableRec(key, value) {}
     };
 
     /// <summary>
-    /// Текущая позиция (в записях).
+    /// Корневой узел дерева.
     /// </summary>
-    size_t position = 0;
+    SNode* pRoot = nullptr;
 
     /// <summary>
-    /// Максимальное количество записей.
+    /// Текущая позиция (в узлах).
     /// </summary>
-    size_t maxSize;
+    SNode* pActiveNode = nullptr;
+
+    /// <summary>
+    /// Длина таблицы.
+    /// </summary>
+    size_t length = 0;
 public:
-    Table(size_t maxSize = 10000) { this->maxSize = maxSize; }
+    TreeTable(size_t maxSize = 10000) : Table(maxSize) {}
 
 #pragma region Info Methods
     /// <summary>
     /// Возращает количество записей (длину таблицы).
     /// </summary>
-    virtual size_t GetDataCount() const noexcept = 0;
+    size_t GetDataCount() const noexcept override;
 
     /// <summary>
     /// Проверка таблицы на пустоту.
     /// Если длина таблицы равна нулю, возвращает true.
     /// </summary>
-    virtual bool IsEmpty() const noexcept = 0;
+    bool IsEmpty() const noexcept override;
 
     /// <summary>
     /// Проверка таблицы на заполненность.
     /// Если длина таблицы равна maxSize, возвращает true.
     /// </summary>
-    virtual bool IsFull() const noexcept = 0;
+    bool IsFull() const noexcept override;
+
+#pragma region Navigate
+
+    /// <summary>
+    /// Устанавливает текущую позицию на первую запись
+    /// Возвращает 0
+    /// </summary>
+    virtual size_t Reset(void) noexcept override;
+
+    /// <summary>
+    /// Проверка окончания таблицы.
+    /// Если таблица кончилась, то возращает true.
+    /// </summary>
+    virtual bool IsTabEnded(void) const noexcept override;
+
+    /// <summary>
+    /// Переход к следующей записи. После применения к последней записи, переходит к первой.
+    /// Возвращает новую позицию.
+    /// </summary>
+    virtual size_t GoNext(void) noexcept override;
 #pragma endregion
 
 #pragma region Main Methods
@@ -59,45 +82,8 @@ public:
     /// Если запись найдена, возвращает указатель на значение.
     /// Если запись не найдена, поднимается исключение.
     /// </summary>
-    virtual Value* Find(Key key) = 0;
+    Value* Find(Key key) override;
 
-    /// <summary>
-    /// Вставка записи в таблицу.
-    /// Если ключ уже существует, его значение будет изменено.
-    /// </summary>
-    virtual void Insert(Key key, Value value) = 0;
-
-    /// <summary>
-    /// Удаление записи из таблицы.
-    /// Если ключа не найдено, поднимается исключение.
-    /// </summary>
-    virtual void Delete(Key key) = 0;
-
-#pragma endregion
-
-#pragma region Navigate
-
-    /// <summary>
-    /// Устанавливает текущую позицию на первую запись
-    /// Возвращает 0
-    /// </summary>
-    virtual size_t Reset(void) noexcept
-    {
-        this->position = 0;
-        return 0;
-    };
-
-    /// <summary>
-    /// Проверка окончания таблицы.
-    /// Если таблица кончилась, то возращает true.
-    /// </summary>
-    virtual bool IsTabEnded(void) const noexcept = 0;
-
-    /// <summary>
-    /// Переход к следующей записи. После применения к последней записи, переходит к первой.
-    /// Возвращает новую позицию.
-    /// </summary>
-    virtual size_t GoNext(void) noexcept = 0;
 #pragma endregion
 
 #pragma region Access
@@ -105,18 +91,19 @@ public:
     /// Получить ключ активной записи.
     /// Если ключ не найден, поднимается исключение.
     /// </summary>
-    virtual Key GetKey(void) const = 0;
+    virtual Key GetKey(void) const override;
 
     /// <summary>
     /// Получить значение активной записи.
     /// Если ключ не найден, поднимается исключение.
     /// </summary>
-    virtual Value GetValuePtr(void) const = 0;
+    virtual Value GetValuePtr(void) const override;
 #pragma endregion
+
     // Печать таблицы
     friend std::ostream& operator<<(std::ostream& os, Table& tab)
     {
-        std::cout << "Table printing" << std::endl;
+        std::cout << "TreeTable printing" << std::endl;
         for (tab.Reset(); !tab.IsTabEnded(); tab.GoNext())
         {
             os << " Key: " << tab.GetKey() << " Val: " << *tab.GetValuePtr() << std::endl;
@@ -124,5 +111,7 @@ public:
         return os;
     }
 };
+
+#include "../src/TreeTable.hpp"
 
 #endif
