@@ -273,8 +273,13 @@ double TPolinom::Calculate(const int countVar, const double* value)
     std::vector<std::string> valNames = expr.GetOperands();
 
     std::map<std::string, double> op;
-    for (int i = 0; i < this->countVar; i++) {
-        op.insert(std::pair<std::string, double>(valNames[i], value[i]));
+    int i = 0;
+    for (auto valName : valNames) {
+        if (i >= countVar)
+            break;
+
+        op.insert(std::pair<std::string, double>(valName, value[i]));
+        i++;
     }
 
     return expr.Calculate(op);
