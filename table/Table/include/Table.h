@@ -16,6 +16,10 @@ protected:
     struct STableRec {
         Key key;
         Value value;
+        STableRec(Key key, Value value) {
+            this->key = key;
+            this->value = value;
+        }
     };
 
     /// <summary>

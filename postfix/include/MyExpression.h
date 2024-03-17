@@ -55,4 +55,7 @@ public:
 	double Calculate(const std::map < std::string , double > & values);
 };
 
+#include "../src/Priority.hpp"
+#include "../src/MyExpression.hpp"
+
 #endif
