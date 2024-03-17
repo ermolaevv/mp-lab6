@@ -1,8 +1,12 @@
 #ifndef _POLINOM_LIB_TPOLIMOM_
 #define _POLINOM_LIB_TPOLINOM_
 
+#include <vector>
+#include <map>
+
 #include "HeadRing.h"
 #include "Monom.h"
+#include "MyExpression.h"
 
 class TPolinom : public THeadRing<TMonom> {
 protected:
@@ -35,6 +39,7 @@ public:
 	std::string ToString(void);
 	friend std::ostream& operator<<(std::ostream& ostr, TPolinom& q);
 
+    double Calculate(const int countVar, const double* value);
 };
 
 TPolinom::TPolinom(const int cVar, const int** monoms, const int len)
@@ -250,6 +255,25 @@ std::string TPolinom::ToString()
 
     }
     return res;
+}
+
+double TPolinom::Calculate(const int countVar, const double* value)
+{
+    if (this->countVar != countVar)
+        throw std::runtime_error("The number of variables is different");
+    if (value == nullptr)
+        throw std::runtime_error("Value's array is nullptr");
+
+    std::string pol = this->ToString();
+    TArithmeticExpression expr(pol);
+    std::vector<std::string> valNames = expr.GetOperands();
+
+    std::map<std::string, double> op;
+    for (int i = 0; i < this->countVar; i++) {
+        op.insert(std::pair<std::string, double>(valNames[i], value[i]));
+    }
+
+    return expr.Calculate(op);
 }
 
 TPolinom TPolinom::operator+(const TPolinom& q)

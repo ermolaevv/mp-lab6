@@ -1,5 +1,3 @@
-﻿#include "MyExpression.h"
-
 TArithmeticExpression::TArithmeticExpression(std::string& infix) : infix(infix)
 {
 	IsValidExpression();

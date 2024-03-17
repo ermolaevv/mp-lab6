@@ -1,5 +1,3 @@
-#include "MyExpression.h"
-
 const std::map<std::string, int> TArithmeticExpression::priority = {
 	{"(", 0},
 	{"[", 0},
@@ -12,8 +10,8 @@ const std::map<std::string, int> TArithmeticExpression::priority = {
 	{"-", 1},
 	{"*", 2},
 	{"/", 2},
-	{"^", 2},
 
+	{"^", 3},
 	{"~", 3},
 	{"!", 3},
 
