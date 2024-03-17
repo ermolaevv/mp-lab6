@@ -1,3 +1,3 @@
-#include <gtest.h>
+#include <gtest/gtest.h>
 #include "Table.h"
 using namespace std;

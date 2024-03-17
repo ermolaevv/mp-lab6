@@ -1,6 +1,6 @@
 #include "MyStack.h"
 
-#include <gtest.h>
+#include <gtest/gtest.h>
 
 TEST(TStack, cant_create_with_zero_size)
 {
