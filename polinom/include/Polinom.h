@@ -378,6 +378,4 @@ double TPolinom::CalculateDefiniteIntegral(int variable, double* start, double* 
     double start_value = integrated_P.Calculate(countVar, start);
     return end_value - start_value;
 }
-
-
 #endif
