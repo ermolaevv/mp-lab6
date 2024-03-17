@@ -161,3 +161,14 @@ TEST(TPolinom, DifferentiationTest) {
     EXPECT_EQ("4*x0^3 - 6*x0*x1*x2^2", diff_P.ToString());
 }
 
+
+
+TEST(TPolinom, CalculateDefiniteIntegralTest) {
+    TPolinom P(3); 
+    int deg[] = { 2, 0, 0 };
+    P.AddMonom(TMonom(3, 3, deg)); 
+    double start[] = { 0, 0, 0 }; 
+    double end[] = { 1, 0, 0 }; 
+    double integral = P.CalculateDefiniteIntegral(0, start, end); 
+    EXPECT_DOUBLE_EQ(1.0, integral); 
+}

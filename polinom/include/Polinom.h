@@ -38,6 +38,7 @@ public:
 
 	TPolinom& operator=(const TPolinom& q); // присваивание
 	bool operator==(const TPolinom& other) const;
+    double CalculateDefiniteIntegral(int variable, double* start, double* end) const;
 
 	std::string ToString(void);
 	friend std::ostream& operator<<(std::ostream& ostr, TPolinom& q);
@@ -365,5 +366,13 @@ TPolinom TPolinom::Differentiation(int variable) const {
     }
     return res;
 }
+
+double TPolinom::CalculateDefiniteIntegral(int variable, double* start, double* end) const {
+    TPolinom integrated_P = this->Integrate(variable);
+    double end_value = integrated_P.Calculate(countVar, end);
+    double start_value = integrated_P.Calculate(countVar, start);
+    return end_value - start_value;
+}
+
 
 #endif
