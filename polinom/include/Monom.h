@@ -42,6 +42,8 @@ public:
 	TMonom& operator=(const TMonom& tm);
 
     TMonom Integrate_Monom() const;
+    TMonom Differentiation_Monom() const;
+
 
 	bool operator==(const TMonom& tm) const;
 	int operator<(const TMonom& mon);
@@ -362,5 +364,17 @@ TMonom TMonom::Integrate_Monom() const {
     return TMonom(new_Coeff, CountDeg, new_Deg);
 }
 
+TMonom TMonom::Differentiation_Monom() const {
+    double new_Coeff = Coeff;
+    int* new_Deg = new int[CountDeg];
+    for (int i = 0; i < CountDeg; i++) {
+        if (Deg[i] > 0) {
+            new_Coeff *= Deg[i];
+            new_Deg[i] = Deg[i] - 1;
+        }
+        else { new_Deg[i] = 0; }
+    }
+    return TMonom(new_Coeff, CountDeg, new_Deg);
+}
 
 #endif

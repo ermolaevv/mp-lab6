@@ -34,6 +34,7 @@ public:
 	TPolinom operator*(const TPolinom& other);
 
     TPolinom Integrate() const;
+    TPolinom Differentiation() const;
 
 	TPolinom& operator=(const TPolinom& q); // присваивание
 	bool operator==(const TPolinom& other) const;
@@ -344,6 +345,18 @@ TPolinom TPolinom::Integrate() const {
         const TMonom* monom = tmp->GetDatValue();
         TMonom integrate_monom = monom->Integrate_Monom();
         res.AddMonom(integrate_monom);
+        tmp = tmp->GetNextDatLink();
+    }
+    return res;
+}
+
+TPolinom TPolinom::Differentiation() const {
+    TPolinom res(countVar);
+    TDatLink<TMonom>* tmp = pFirst;
+    while (tmp != pHead) {
+        const TMonom* monom = tmp->GetDatValue();
+        TMonom diff_monom = monom->Differentiation_Monom();
+        res.AddMonom(diff_monom);
         tmp = tmp->GetNextDatLink();
     }
     return res;
