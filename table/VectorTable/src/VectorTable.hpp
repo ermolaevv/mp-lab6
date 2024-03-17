@@ -39,35 +39,35 @@ void VectorTable<Key, Value>::Delete(Key key)
 template<class Key, class Value>
 bool VectorTable<Key, Value>::IsTabEnded(void) const noexcept
 {
-    return position >= data.size();
+    return this->position >= data.size();
 }
 
 template<class Key, class Value>
 size_t VectorTable<Key, Value>::GoNext(void) noexcept
 {
-    if (position < data.size()) {
-        position++;
+    if (this->position < data.size()) {
+        this->position++;
     }
     else {
-        position = 0;
+        this->position = 0;
     }
-    return position;
+    return this->position;
 }
 
 template<class Key, class Value>
 Key VectorTable<Key, Value>::GetKey(void) const
 {
-    if (position >= data.size()) {
+    if (this->IsTabEnded()) {
         throw std::runtime_error("End of table reached.");
     }
-    return data[position].key;
+    return data[this->position].key;
 }
 
 template<class Key, class Value>
 Value VectorTable<Key, Value>::GetValuePtr(void) const
 {
-    if (position >= data.size()) {
+    if (this->IsTabEnded()) {
         throw std::runtime_error("End of table reached.");
     }
-    return data[position].value;
+    return data[this->position].value;
 }
