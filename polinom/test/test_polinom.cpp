@@ -2,6 +2,8 @@
 #include "Polinom.h"
 using namespace std;
 
+const double EPSILON = 1e-6;
+
 TEST(TPolinom, test1)
 {
 	TPolinom P, Q, res;
@@ -136,3 +138,32 @@ TEST(TPolinom, Calculate_test)
     double values[] = { 2, 3, 4 };
     ASSERT_EQ(168, round(P.Calculate(3, values) * 100) / 100);
 }
+
+
+TEST(TPolinom, IntegrateTest) {
+    int deg[] = { 2, 1, 3 }; 
+    TMonom monom(5.0, 3, deg);
+
+    TMonom integrated_monom = monom.Integrate_Monom(1);
+
+    double expected_coeff = 5.0 / 2; 
+    int expected_deg[] = { 2, 2, 3 }; 
+    TMonom expected_monom(expected_coeff, 3, expected_deg);
+
+    ASSERT_EQ(integrated_monom, expected_monom);
+}
+
+
+TEST(TPolinomTest, DifferentiationTest) {
+    int deg[] = { 2, 1, 3 }; 
+    TMonom monom(5.0, 3, deg);
+
+    TMonom diff_monom = monom.Differentiation_Monom(1);
+
+    double expected_coeff = 5.0 * 1; 
+    int expected_deg[] = { 2, 0, 3 }; 
+    TMonom expected_monom(expected_coeff, 3, expected_deg);
+
+    ASSERT_EQ(diff_monom, expected_monom);
+}
+
