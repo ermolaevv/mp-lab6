@@ -117,7 +117,8 @@ public:
     friend std::ostream& operator<<(std::ostream& os, Table& tab)
     {
         std::cout << "Table printing" << std::endl;
-        for (tab.Reset(); !tab.IsTabEnded(); tab.GoNext())
+        tab.Reset();
+        for (size_t i = 0; i < tab.GetDataCount(); i++, tab.GoNext())
         {
             os << " Key: " << tab.GetKey() << " Val: " << *tab.GetValuePtr() << std::endl;
         }

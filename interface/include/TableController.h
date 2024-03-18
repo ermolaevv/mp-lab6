@@ -18,12 +18,18 @@ protected:
     /// Вектор всех таблиц с индификаторами (именем)
     /// </summary>
     std::vector<std::pair<std::string, Table<Key, Value>*>> tables;
+    std::vector<std::string> names;
 
     /// <summary>
     /// Указатель на активную таблицу
     /// </summary>
-    Table<Key, Value>* activeTable;
+    Table<Key, Value>* activeTable = nullptr;
 public:
+    /// <summary>
+    /// Получить список имен таблиц
+    /// </summary>
+    std::vector<std::string>& GetNames(void) noexcept { return names; }
+
 #pragma region Record
     /// <summary>
     /// Поиск по ключу в активной таблице.
@@ -52,7 +58,7 @@ public:
     /// <summary>
     /// Добавить таблицу в список таблиц
     /// </summary>
-    void AddTable(std::string name, Table<Key, Value>& table);
+    void AddTable(std::string name, Table<Key, Value>* table);
 
 
     /// <summary>
@@ -63,7 +69,7 @@ public:
     // Печать таблицы
     friend std::ostream& operator<<(std::ostream& os, TableController& tab)
     {
-        return os << *activeTable;
+        return os << *tab.activeTable;
     }
 #pragma endregion
 };
