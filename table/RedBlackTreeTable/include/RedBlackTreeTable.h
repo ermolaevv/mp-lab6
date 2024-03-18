@@ -55,6 +55,34 @@ public:
         }
         return os;
     }
+private:
+#pragma region Auxiliary Methods
+
+    /// <summary>
+    /// Балансировка дерева после вставки нового узла.
+    /// </summary>
+    /// <param name="node">Новый узел.</param>
+    void BalanceInsertion(SRBNode<Key, Value>* node);
+
+    /// <summary>
+    /// Балансировка дерева после удаления узла.
+    /// </summary>
+    /// <param name="node">Удаленный узел.</param>
+    void BalanceDeletion(SRBNode<Key, Value>* node);
+
+    /// <summary>
+    /// Левый поворот вокруг узла.
+    /// </summary>
+    /// <param name="node">Узел, вокруг которого происходит поворот.</param>
+    void LeftRotate(SRBNode<Key, Value>* node);
+
+    /// <summary>
+    /// Правый поворот вокруг узла.
+    /// </summary>
+    /// <param name="node">Узел, вокруг которого происходит поворот.</param>
+    void RightRotate(SRBNode<Key, Value>* node);
+
+#pragma endregion
 };
 
 #include "../src/RedBlackTreeTable.hpp"
