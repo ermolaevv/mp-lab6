@@ -90,7 +90,7 @@ public:
     /// Получить значение активной записи.
     /// Если ключ не найден, поднимается исключение.
     /// </summary>
-    Value GetValuePtr(void) const override;
+    Value* GetValuePtr(void) const override;
 #pragma endregion
 
     /// <summary>

@@ -64,10 +64,11 @@ Key VectorTable<Key, Value>::GetKey(void) const
 }
 
 template<class Key, class Value>
-Value VectorTable<Key, Value>::GetValuePtr(void) const
+Value* VectorTable<Key, Value>::GetValuePtr(void) const
 {
     if (this->IsTabEnded()) {
         throw std::runtime_error("End of table reached.");
     }
-    return data[this->position].value;
+
+    return &data[this->position].value;
 }

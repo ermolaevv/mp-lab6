@@ -27,7 +27,7 @@ void ListTable<Key, Value>::Insert(Key key, Value value)
     }
     catch (std::runtime_error) {
         if (!IsFull())
-            data.InsLast(new Table<Key, Value>::STableRec<Key, Value>(key, value));
+            data.InsLast(new typename Table<Key, Value>::STableRec<Key, Value>(key, value));
         else
             throw std::length_error("Table is overflow");
     }
@@ -70,11 +70,11 @@ Key ListTable<Key, Value>::GetKey(void) const
 }
 
 template<class Key, class Value>
-Value ListTable<Key, Value>::GetValuePtr(void) const
+Value* ListTable<Key, Value>::GetValuePtr(void) const
 {
     auto* rec = data.GetDatValue();
     if (rec == nullptr)
         throw std::runtime_error("Getting value from empty table");
-    return rec->value;
+    return &rec->value;
 }
 

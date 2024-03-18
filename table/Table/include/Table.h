@@ -111,7 +111,7 @@ public:
     /// Получить значение активной записи.
     /// Если ключ не найден, поднимается исключение.
     /// </summary>
-    virtual Value GetValuePtr(void) const = 0;
+    virtual Value* GetValuePtr(void) const = 0;
 #pragma endregion
     // Печать таблицы
     friend std::ostream& operator<<(std::ostream& os, Table& tab)
