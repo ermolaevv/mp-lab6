@@ -47,7 +47,7 @@ Key TreeTable<Key, Value>::GetKey(void) const
 }
 
 template<class Key, class Value>
-Value TreeTable<Key, Value>::GetValuePtr(void) const
+Value* TreeTable<Key, Value>::GetValuePtr(void) const
 {
     return this->pActiveNode->value;
 }
