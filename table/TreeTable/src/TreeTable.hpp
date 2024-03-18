@@ -19,35 +19,60 @@ bool TreeTable<Key, Value>::IsFull() const noexcept
 template<class Key, class Value>
 size_t TreeTable<Key, Value>::Reset(void) noexcept
 {
-    return size_t();
+    this->pActiveNode = this->pRoot;
+    while (this->pActiveNode && this->pActiveNode->pLeft != nullptr) {  this->pActiveNode = this->pActiveNode->pLeft; }
+    return 0;
 }
 
 template<class Key, class Value>
 bool TreeTable<Key, Value>::IsTabEnded(void) const noexcept
 {
-    return false;
+    return this->pActiveNode == nullptr;
 }
 
 template<class Key, class Value>
 size_t TreeTable<Key, Value>::GoNext(void) noexcept
 {
-    return size_t();
+    if (this->pActiveNode == nullptr) { return 0; }
+
+    if (this->pActiveNode->pRight != nullptr) {
+        this->pActiveNode = this->pActiveNode->pRight;
+        while (this->pActiveNode->pLeft != nullptr) 
+            this->pActiveNode = this->pActiveNode->pLeft;
+    }
+    else {
+        SNode<Key, Value>* pPrevNode = nullptr;
+        while (this->pActiveNode->pParent != nullptr) {
+            pPrevNode = this->pActiveNode;
+            this->pActiveNode = this->pActiveNode->pParent;
+            if (this->pActiveNode->pLeft == pPrevNode) { break; }
+        }
+    }
+    return 0;
 }
 
 template<class Key, class Value>
 Value* TreeTable<Key, Value>::Find(Key key)
 {
+    SNode<Key, Value>* currentNode = this->pRoot;
+    while (currentNode != nullptr) {
+        if (key == currentNode->key) { return &(currentNode->value); }
+        else if (key < currentNode->key) { currentNode = currentNode->pLeft; }
+        else { currentNode = currentNode->pRight; }
+    }
     return nullptr;
 }
 
 template<class Key, class Value>
 Key TreeTable<Key, Value>::GetKey(void) const
 {
-    return this->pActiveNode->key;
+    if (this->pActiveNode != nullptr) { return this->pActiveNode->key; }
+    else { throw std::runtime_error("ActiveNode is null."); }
 }
 
 template<class Key, class Value>
 Value* TreeTable<Key, Value>::GetValuePtr(void) const
 {
-    return this->pActiveNode->value;
+    if (this->pActiveNode != nullptr) { return &(this->pActiveNode->value); }
+    else { throw std::runtime_error("Active node is null."); }
 }
