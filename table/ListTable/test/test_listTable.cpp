@@ -90,7 +90,7 @@ TEST(ListTable, Get_key_from_empty_table) {
 TEST(ListTable, Get_value) {
     ListTable<string, int> table;
     ASSERT_NO_THROW(table.Insert("r1", 1234));
-    ASSERT_EQ(1234, table.GetValuePtr());
+    ASSERT_EQ(1234, *table.GetValuePtr());
 }
 
 TEST(ListTable, Get_value_from_empty_table) {
