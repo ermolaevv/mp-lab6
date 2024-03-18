@@ -21,17 +21,17 @@ void VectorTable<Key, Value>::Insert(Key key, Value value)
 }
 
 template<class Key, class Value>
-void VectorTable<Key, Value>::Delete(Key key)
-{
-    try
-    {
-        Value* value = Find(key);
-        data.erase(std::remove_if(data.begin(), data.end(), [key](const auto& record) {
-            return record.key == key;
-            }), data.end());
+void VectorTable<Key, Value>::Delete(Key key) {
+    auto it = std::find_if(data.begin(), data.end(), [key](const auto& record) { return record.key == key; });
+    if (it != data.end()) {
+        // Меняем с последним
+        if (it != data.end() - 1) {
+            std::swap(*it, data.back());
+        }
+        // Последний элемент удаляем
+        data.pop_back();
     }
-    catch (const std::runtime_error&)
-    {
+    else {
         throw std::runtime_error("Key not found in the table.");
     }
 }
