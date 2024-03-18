@@ -53,8 +53,8 @@ TEST(VectorTableTest, GetKeyAndValue) {
     table.Insert(1, "one");
     table.Insert(2, "two");
     ASSERT_EQ(table.GetKey(), 1);
-    ASSERT_EQ(table.GetValuePtr(), "one");
+    ASSERT_EQ(*table.GetValuePtr(), "one");
     ASSERT_EQ(table.GoNext(), 1);
     ASSERT_EQ(table.GetKey(), 2);
-    ASSERT_EQ(table.GetValuePtr(), "two");
+    ASSERT_EQ(*table.GetValuePtr(), "two");
 }
