@@ -183,9 +183,14 @@ void TDatList<T>::DelFirst(void)
 template<class T>
 void TDatList<T>::DelCurrent(void)
 {
+    if (pCurrLink == pFirst)
+        DelFirst();
+    if (pCurrLink == pLast) {
+        pLast = pPrevLink;
+    }
 	if (pCurrLink != NULL) {
 		TDatLink<T>* prev = pCurrLink;
-		pFirst = (TDatLink<T>*)pCurrLink->GetNextLink();
+		pCurrLink = (TDatLink<T>*)pCurrLink->GetNextLink();
 		delete prev;
 		ListLen--;
 	}
