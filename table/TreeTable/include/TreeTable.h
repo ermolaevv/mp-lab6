@@ -35,7 +35,7 @@ protected:
     /// </summary>
     size_t length = 0;
 public:
-    TreeTable(size_t maxSize = 10000) : Table(maxSize) {}
+    TreeTable(size_t maxSize = 10000) : Table<Key, Value>(maxSize) {}
 
 #pragma region Info Methods
     /// <summary>

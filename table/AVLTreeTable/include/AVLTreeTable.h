@@ -20,7 +20,7 @@ protected:
     };
 
 public:
-    AVLTreeTable(size_t maxSize = 10000) : TreeTable(maxSize) {}
+    AVLTreeTable(size_t maxSize = 10000) : TreeTable<Key, Value>(maxSize) {}
 
 #pragma region Main Methods
 
