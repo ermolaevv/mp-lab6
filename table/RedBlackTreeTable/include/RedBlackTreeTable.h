@@ -27,7 +27,7 @@ protected:
         SRBNode(Key key, Value value) : SNode(key, value) {}
     };
 public:
-    RedBlackTreeTable(size_t maxSize = 10000) : TreeTable(maxSize) {}
+    RedBlackTreeTable(size_t maxSize = 10000) : TreeTable<Key, Value>(maxSize) {}
 
 #pragma region Main Methods
 
