@@ -4,23 +4,23 @@ void RedBlackTreeTable<Key, Value>::Insert(Key key, Value value)
     SRBNode<Key, Value>* new_Node = new SRBNode<Key, Value>(key, value);
     new_Node->color = RED; // Новый узел всегда красный
 
-    if (TreeTable<Key, Value>::pRoot == nullptr) {
+    if (this->pRoot == nullptr) {
         // Если дерево пустое, новый узел черный корень 1
-        TreeTable<Key, Value>::pRoot = new_Node;
+        this->pRoot = new_Node;
         new_Node->color = BLACK;
     }
     else {
         // Если нет, то ищем место для вставки и добавляем узел как в обычное бинарное дерево поиска
-        SRBNode<Key, Value>* current = static_cast<SRBNode<Key, Value>*>(this->pRoot);
-        SRBNode<Key, Value>* parent = nullptr;
+        auto current = this->pRoot;
+        auto parent = this->pRoot;
 
         while (current != nullptr) {
             parent = current;
-            if (key < current->key) { current = static_cast<SRBNode<Key, Value>*>(current->pLeft); }
-            else { current = static_cast<SRBNode<Key, Value>*>(current->pRight); }
+            if (key < current->key) { current = current->pLeft; }
+            else { current = current->pRight; }
         }
 
-        new_Node->pParent = parent;
+        new_Node->pParent = static_cast<SRBNode<Key, Value>*>(parent);
 
         // новый узел или как левый, или правый потомок в зависимости от значения ключа
         if (key < parent->key) { parent->pLeft = new_Node; }
@@ -33,7 +33,7 @@ void RedBlackTreeTable<Key, Value>::Insert(Key key, Value value)
 template<class Key, class Value>
 void RedBlackTreeTable<Key, Value>::Delete(Key key)
 {
-    SRBNode<Key, Value>* delete_Node = FindNode(key);
+    auto delete_Node = static_cast<SRBNode<Key, Value>*>(this->FindNode(key));
 
 
     if (!delete_Node) { throw std::runtime_error("Key not found."); }
@@ -51,7 +51,7 @@ void RedBlackTreeTable<Key, Value>::Delete(Key key)
 template<class Key, class Value>
 void RedBlackTreeTable<Key, Value>::BalanceInsertion(SRBNode<Key, Value>* node)
 {
-    while (node != TreeTable<Key, Value>::pRoot && node->pParent->color == RED) {
+    while (node != this->pRoot && node->pParent->color == RED) {
 
         // Если новый вставленный узел является левым потомком
         if (node->pParent == node->pParent->pParent->pLeft) {
@@ -95,13 +95,13 @@ void RedBlackTreeTable<Key, Value>::BalanceInsertion(SRBNode<Key, Value>* node)
             }
         }
     }
-    TreeTable<Key, Value>::pRoot->color = BLACK;
+    //this->pRoot->color = BLACK;
 }
 
 template<class Key, class Value>
 void RedBlackTreeTable<Key, Value>::BalanceDeletion(SRBNode<Key, Value>* node)
 {
-    while (node != TreeTable<Key, Value>::pRoot && (node == nullptr || node->color == BLACK)) {
+    while (node != this->pRoot && (node == nullptr || node->color == BLACK)) {
         if (node == node->pParent->pLeft) {
             SRBNode<Key, Value>* brother = node->pParent->pRight;
 
@@ -133,7 +133,7 @@ void RedBlackTreeTable<Key, Value>::BalanceDeletion(SRBNode<Key, Value>* node)
                 node->pParent->color = BLACK;
                 brother->pRight->color = BLACK;
                 LeftRotate(node->pParent);
-                node = TreeTable<Key, Value>::pRoot;
+                node = static_cast<SRBNode<Key, Value>*>(this->pRoot);
             }
         }
         else {
@@ -165,7 +165,7 @@ void RedBlackTreeTable<Key, Value>::BalanceDeletion(SRBNode<Key, Value>* node)
                 node->pParent->color = BLACK;
                 brother->pLeft->color = BLACK;
                 RightRotate(node->pParent);
-                node = TreeTable<Key, Value>::pRoot;
+                node = static_cast<SRBNode<Key, Value>*>(this->pRoot);
             }
         }
     }
@@ -177,17 +177,17 @@ void RedBlackTreeTable<Key, Value>::BalanceDeletion(SRBNode<Key, Value>* node)
 }
 
 template<class Key, class Value>
-void RedBlackTreeTable<Key, Value>::LeftRotate(SRBNode<Key, Value>* node)
+void RedBlackTreeTable<Key, Value>::LeftRotate(TreeTable<Key, Value>::template SNode<Key, Value>* node)
 {
     // Левый поворот вокруг узла
-    SRBNode<Key, Value>* rightChild = node->pRight;
+    auto rightChild = node->pRight;
     node->pRight = rightChild->pLeft;
 
     if (rightChild->pLeft != nullptr) { rightChild->pLeft->pParent = node; }
 
     rightChild->pParent = node->pParent;
 
-    if (node->pParent == nullptr) { TreeTable<Key, Value>::pRoot = rightChild; }
+    if (node->pParent == nullptr) { this->pRoot = rightChild; }
     else if (node == node->pParent->pLeft) { node->pParent->pLeft = rightChild; }
     else { node->pParent->pRight = rightChild; }
 
@@ -196,17 +196,17 @@ void RedBlackTreeTable<Key, Value>::LeftRotate(SRBNode<Key, Value>* node)
 }
 
 template<class Key, class Value>
-void RedBlackTreeTable<Key, Value>::RightRotate(SRBNode<Key, Value>* node)
+void RedBlackTreeTable<Key, Value>::RightRotate(TreeTable<Key, Value>::template SNode<Key, Value>* node)
 {
     // Правый поворот вокруг узла
-    SRBNode<Key, Value>* leftChild = node->pLeft;
+    auto leftChild = node->pLeft;
     node->pLeft = leftChild->pRight;
 
     if (leftChild->pRight != nullptr) { leftChild->pRight->pParent = node; }
 
     leftChild->pParent = node->pParent;
 
-    if (node->pParent == nullptr) { TreeTable<Key, Value>::pRoot = leftChild; }
+    if (node->pParent == nullptr) { this->pRoot = leftChild; }
     else if (node == node->pParent->pRight) { node->pParent->pRight = leftChild; }
     else { node->pParent->pLeft = leftChild; }
 

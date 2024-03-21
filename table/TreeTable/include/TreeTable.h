@@ -19,6 +19,7 @@ protected:
         SNode* pRight = nullptr;
         SNode* pParent = nullptr; 
         SNode(Key key, Value value) : Table<Key, Value>::template STableRec<Key, Value>(key, value) {}
+        SNode() : Table<Key, Value>::template STableRec<Key, Value>(Key(), Value()) {}
     };
 
     /// <summary>
@@ -37,8 +38,6 @@ protected:
     size_t length = 0;
 public:
     TreeTable(size_t maxSize = 10000) : Table<Key, Value>(maxSize) {}
-    typename TreeTable<Key, Value>::template SNode<Key, Value>* FindNode(Key key);
-
 
 #pragma region Info Methods
     /// <summary>
@@ -87,6 +86,12 @@ public:
     /// </summary>
     Value* Find(Key key) override;
 
+    /// <summary>
+    /// Поиск узла по ключу.
+    /// Если узел найден, возвращает указатель на него.
+    /// Если узел не найден, возвращает nullptr.
+    /// </summary>
+    virtual SNode<Key, Value>* FindNode(Key key);
 #pragma endregion
 
 #pragma region Access

@@ -16,11 +16,10 @@ protected:
     struct STableRec {
         Key key;
         Value value;
-        STableRec* pLeft = nullptr;
-        STableRec* pRight = nullptr;
-        STableRec* pParent = nullptr;
-        STableRec(Key key, Value value) : key(key), value(value) {}
-        STableRec() = default;
+        STableRec(Key key, Value value) {
+            this->key = key;
+            this->value = value;
+        }
     };
 
     /// <summary>
@@ -73,13 +72,6 @@ public:
     /// Если ключа не найдено, поднимается исключение.
     /// </summary>
     virtual void Delete(Key key) = 0;
-
-    /// <summary>
-    /// Поиск узла по ключу.
-    /// Если узел найден, возвращает указатель на него.
-    /// Если узел не найден, возвращает nullptr.
-    /// </summary>
-    virtual STableRec<Key, Value>* FindNode(Key key) = 0;
 #pragma endregion
 
 #pragma region Navigate

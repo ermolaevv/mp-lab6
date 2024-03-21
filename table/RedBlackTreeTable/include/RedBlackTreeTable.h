@@ -22,16 +22,17 @@ protected:
     /// Шаблонная стркутура узла дерева.
     /// </summary>
     template <class Key, class Value>
-    struct SRBNode : public TreeTable<Key, Value>::template SNode<Key, Value> {
+    struct SRBNode : TreeTable<Key, Value>::template SNode<Key, Value> {
         Color color;
-        SRBNode* pParent;
-        SRBNode(Key key, Value value) : TreeTable<Key, Value>::SNode<Key, Value>(key, value) {}
+        SRBNode* pParent = nullptr;
+        SRBNode* pLeft = nullptr;
+        SRBNode* pRight = nullptr;
+        SRBNode(Key key, Value value) : TreeTable<Key, Value>::template SNode<Key, Value>(key, value) {}
     };
 
 
 public:
     RedBlackTreeTable(size_t maxSize = 10000) : TreeTable<Key, Value>(maxSize) {}
-    SRBNode<Key, Value>* FindNode(Key key) const;
 
 #pragma region Main Methods
 
@@ -78,13 +79,13 @@ private:
     /// Левый поворот вокруг узла.
     /// </summary>
     /// <param name="node">Узел, вокруг которого происходит поворот.</param>
-    void LeftRotate(SRBNode<Key, Value>* node);
+    void LeftRotate(TreeTable<Key, Value>::template SNode<Key, Value>* node);
 
     /// <summary>
     /// Правый поворот вокруг узла.
     /// </summary>
     /// <param name="node">Узел, вокруг которого происходит поворот.</param>
-    void RightRotate(SRBNode<Key, Value>* node);
+    void RightRotate(TreeTable<Key, Value>::template SNode<Key, Value>* node);
 
 #pragma endregion
 };
