@@ -17,7 +17,8 @@ protected:
     struct SNode : Table<Key, Value>::template STableRec<Key, Value> {
         SNode* pLeft = nullptr;
         SNode* pRight = nullptr;
-        SNode(Key key, Value value) : STableRec(key, value) {}
+        SNode* pParent = nullptr; 
+        SNode(Key key, Value value) : Table<Key, Value>::template STableRec<Key, Value>(key, value) {}
     };
 
     /// <summary>
@@ -36,6 +37,8 @@ protected:
     size_t length = 0;
 public:
     TreeTable(size_t maxSize = 10000) : Table<Key, Value>(maxSize) {}
+    typename TreeTable<Key, Value>::template SNode<Key, Value>* FindNode(Key key);
+
 
 #pragma region Info Methods
     /// <summary>

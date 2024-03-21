@@ -5,19 +5,19 @@ void RedBlackTreeTable<Key, Value>::Insert(Key key, Value value)
     new_Node->color = RED; // Новый узел всегда красный
 
     if (TreeTable<Key, Value>::pRoot == nullptr) {
-        // Если дерево пустое, новый узел черный корень 
+        // Если дерево пустое, новый узел черный корень 1
         TreeTable<Key, Value>::pRoot = new_Node;
         new_Node->color = BLACK;
     }
     else {
         // Если нет, то ищем место для вставки и добавляем узел как в обычное бинарное дерево поиска
-        SRBNode<Key, Value>* current = TreeTable<Key, Value>::pRoot;
+        SRBNode<Key, Value>* current = static_cast<SRBNode<Key, Value>*>(this->pRoot);
         SRBNode<Key, Value>* parent = nullptr;
 
         while (current != nullptr) {
             parent = current;
-            if (key < current->key) { current = current->pLeft; }
-            else { current = current->pRight; }
+            if (key < current->key) { current = static_cast<SRBNode<Key, Value>*>(current->pLeft); }
+            else { current = static_cast<SRBNode<Key, Value>*>(current->pRight); }
         }
 
         new_Node->pParent = parent;
@@ -33,7 +33,8 @@ void RedBlackTreeTable<Key, Value>::Insert(Key key, Value value)
 template<class Key, class Value>
 void RedBlackTreeTable<Key, Value>::Delete(Key key)
 {
-    SRBNode<Key, Value>* delete_Node = static_cast<SRBNode<Key, Value>*>(TreeTable<Key, Value>::FindNode(key));
+    SRBNode<Key, Value>* delete_Node = FindNode(key);
+
 
     if (!delete_Node) { throw std::runtime_error("Key not found."); }
 
@@ -105,7 +106,7 @@ void RedBlackTreeTable<Key, Value>::BalanceDeletion(SRBNode<Key, Value>* node)
             SRBNode<Key, Value>* brother = node->pParent->pRight;
 
             if (brother->color == RED) {
-                // Случай 1: брат, братан, братишка когда меня отпус...кхм кхм - узла красный
+                // Случай 1: брат - узла красный
                 brother->color = BLACK;
                 node->pParent->color = RED;
                 LeftRotate(node->pParent);
@@ -212,3 +213,8 @@ void RedBlackTreeTable<Key, Value>::RightRotate(SRBNode<Key, Value>* node)
     leftChild->pRight = node;
     node->pParent = leftChild;
 }
+
+
+
+
+

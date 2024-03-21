@@ -16,10 +16,11 @@ protected:
     struct STableRec {
         Key key;
         Value value;
-        STableRec(Key key, Value value) {
-            this->key = key;
-            this->value = value;
-        }
+        STableRec* pLeft = nullptr;
+        STableRec* pRight = nullptr;
+        STableRec* pParent = nullptr;
+        STableRec(Key key, Value value) : key(key), value(value) {}
+        STableRec() = default;
     };
 
     /// <summary>
@@ -73,6 +74,12 @@ public:
     /// </summary>
     virtual void Delete(Key key) = 0;
 
+    /// <summary>
+    /// Поиск узла по ключу.
+    /// Если узел найден, возвращает указатель на него.
+    /// Если узел не найден, возвращает nullptr.
+    /// </summary>
+    virtual STableRec<Key, Value>* FindNode(Key key) = 0;
 #pragma endregion
 
 #pragma region Navigate
@@ -112,6 +119,8 @@ public:
     /// Если ключ не найден, поднимается исключение.
     /// </summary>
     virtual Value* GetValuePtr(void) const = 0;
+
+
 #pragma endregion
     // Печать таблицы
     friend std::ostream& operator<<(std::ostream& os, Table& tab)

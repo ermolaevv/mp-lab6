@@ -55,6 +55,7 @@ template<class Key, class Value>
 Value* TreeTable<Key, Value>::Find(Key key)
 {
     SNode<Key, Value>* currentNode = this->pRoot;
+    // добавить исключение
     while (currentNode != nullptr) {
         if (key == currentNode->key) { return &(currentNode->value); }
         else if (key < currentNode->key) { currentNode = currentNode->pLeft; }
@@ -62,6 +63,26 @@ Value* TreeTable<Key, Value>::Find(Key key)
     }
     return nullptr;
 }
+
+
+template <class Key, class Value>
+typename TreeTable<Key, Value>::template SNode<Key, Value>* TreeTable<Key, Value>::FindNode(Key key) {
+    SNode<Key, Value>* currentNode = pRoot;
+
+    while (currentNode != nullptr) {
+        if (currentNode->key == key) {
+            return currentNode;
+        }
+        else if (key < currentNode->key) {
+            currentNode = currentNode->pLeft;
+        }
+        else {
+            currentNode = currentNode->pRight;
+        }
+    }
+    return nullptr;
+}
+
 
 template<class Key, class Value>
 Key TreeTable<Key, Value>::GetKey(void) const

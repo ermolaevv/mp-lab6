@@ -8,7 +8,7 @@
 /// Класс таблиц на красно-черном дереве.
 /// </summary>
 template <class Key, class Value>
-class RedBlackTreeTable : TreeTable<Key, Value> {
+class RedBlackTreeTable : public TreeTable<Key, Value> {
 protected:
     /// <summary>
     /// Перечисление цветов узлов
@@ -22,12 +22,16 @@ protected:
     /// Шаблонная стркутура узла дерева.
     /// </summary>
     template <class Key, class Value>
-    struct SRBNode : TreeTable<Key, Value>::template SNode<Key, Value> {
+    struct SRBNode : public TreeTable<Key, Value>::template SNode<Key, Value> {
         Color color;
-        SRBNode(Key key, Value value) : SNode(key, value) {}
+        SRBNode* pParent;
+        SRBNode(Key key, Value value) : TreeTable<Key, Value>::SNode<Key, Value>(key, value) {}
     };
+
+
 public:
     RedBlackTreeTable(size_t maxSize = 10000) : TreeTable<Key, Value>(maxSize) {}
+    SRBNode<Key, Value>* FindNode(Key key) const;
 
 #pragma region Main Methods
 
