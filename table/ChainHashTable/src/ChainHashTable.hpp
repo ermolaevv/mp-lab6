@@ -3,9 +3,13 @@ template <class Key, class Value>
 Value* ChainHashTable<Key, Value>::Find(Key key) {
     size_t index = this->GetHash(key, M);
     auto& list = this->data[index];
-    for (auto& rec : list) {
-        if (rec.key == key) {
-            return &rec.value;
+
+    for (list.Reset(); !list.IsListEnded(); list.GoNext()) {
+        auto rec = list.GetDatValue();
+        if (rec == nullptr)
+            break;
+        if (rec->key == key) {
+            return &rec->value;
         }
     }
     throw std::runtime_error("Key not found");
@@ -13,28 +17,19 @@ Value* ChainHashTable<Key, Value>::Find(Key key) {
 
 template <class Key, class Value>
 void ChainHashTable<Key, Value>::Insert(Key key, Value value) {
-    if (this->length == M) {
-        TDatList<STableRec>* newData = new TDatList<STableRec>[2 * M];
-        for (size_t i = 0; i < M; ++i) {
-            for (auto& rec : this->data[i]) {
-                size_t newIndex = this->GetHash(rec.key, 2 * M);
-                newData[newIndex].push_back(rec);
-            }
-        }
-        delete[] this->data;
-        this->data = newData;
-        M *= 2;
-    }
-
     size_t index = this->GetHash(key, M);
     auto& list = this->data[index];
-    for (auto& rec : list) {
-        if (rec.key == key) {
-            rec.value = value;
+
+    for (list.Reset(); !list.IsListEnded(); list.GoNext()) {
+        auto rec = list.GetDatValue();
+        if (rec == nullptr)
+            break;
+        if (rec->key == key) {
+            rec->value = value;
             return;
         }
     }
-    list.push_back({ key, value });
+    list.InsCurrent(new Table<Key, Value>::STableRec<Key, Value>(key, value));
     this->length++;
 }
 
@@ -42,9 +37,11 @@ template <class Key, class Value>
 void ChainHashTable<Key, Value>::Delete(Key key) {
     size_t index = this->GetHash(key, M);
     auto& list = this->data[index];
-    for (auto it = list.begin(); it != list.end(); ++it) {
-        if (it->key == key) {
-            list.erase(it);
+
+    for (list.Reset(); !list.IsListEnded(); list.GoNext()) {
+        auto rec = list.GetDatValue();
+        if (rec->key == key) {
+            list.DelCurrent();
             this->length--;
             return;
         }
@@ -61,11 +58,11 @@ size_t ChainHashTable<Key, Value>::Reset(void) noexcept {
 
 template <class Key, class Value>
 size_t ChainHashTable<Key, Value>::GoNext(void) noexcept {
-    while (this->position < M && this->data[this->position].empty()) {
+    while (this->position < M && this->data[this->position].GetLength() == 0) {
         this->position++;
     }
     if (this->position < M) {
-        this->actriveRec = &this->data[this->position].front();
+        this->actriveRec = this->data[this->position].GetFirst()->GetDatValue();
         this->position++;
         return this->position - 1;
     }

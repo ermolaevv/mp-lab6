@@ -34,3 +34,9 @@ Value* HashTable<Key, Value>::GetValuePtr(void) const
     }
     return &this->actriveRec->value;
 }
+
+template<class Key, class Value>
+size_t HashTable<Key, Value>::GetDataCount() const noexcept
+{
+    return this->length;
+}

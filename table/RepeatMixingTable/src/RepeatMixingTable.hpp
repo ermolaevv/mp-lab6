@@ -1,7 +1,7 @@
 #include "RepeatMixingTable.h"
 template <class Key, class Value>
 Value* RepeatMixingTable<Key, Value>::Find(Key key) {
-    size_t ind = GetHash(key, this->maxSize);
+    size_t ind = this->GetHash(key, this->maxSize);
 
     while (data[ind].key != 0 && data[ind].key != key) {
         ind = (ind + 1) % this->maxSize;
@@ -23,7 +23,7 @@ void RepeatMixingTable<Key, Value>::Insert(Key key, Value value) {
     }
 
     size_t num = -1;
-    size_t ind = GetHash(key, this->maxSize);
+    size_t ind = this->GetHash(key, this->maxSize);
 
     while (data[ind].key != 0 && data[ind].key != key) {
         ind = (ind + 1) % this->maxSize;
@@ -60,7 +60,7 @@ size_t RepeatMixingTable<Key, Value>::GoNext(void) noexcept {
 
 template <class Key, class Value>
 void RepeatMixingTable<Key, Value>::Delete(Key key) {
-    size_t ind = GetHash(key, this->maxSize);
+    size_t ind = this->GetHash(key, this->maxSize);
 
     while (data[ind].key != 0 && data[ind].key != key) {
         ind = (ind + 1) % this->maxSize;
