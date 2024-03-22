@@ -28,8 +28,10 @@ protected:
     /// </summary>
     size_t GetHash(Key key, int mod) {
         size_t sum = 0;
-        for (char ch: std::to_string(key))
+
+        for (char ch : key)
             sum += ch;
+
         return sum % mod;
     }
 public:

@@ -9,7 +9,7 @@
 /// Класс хэш-таблиц на методе цепочек.
 /// </summary>
 template <class Key, class Value>
-class ChainHashTable : HashTable<Key, Value> {
+class ChainHashTable : public HashTable<Key, Value> {
 protected:
     /// <summary>
     /// Rоличество строк хэш-таблицы.

@@ -3,21 +3,21 @@
     using namespace std;
 
     TEST(ChainHashTable, InsertAndFind) {
-        ChainHashTable<int, string> hashTable;
-        int key = 1;
-        string value = "test";
+        ChainHashTable<string, int> hashTable;
+        string key = "test";
+        int value = 1;
         hashTable.Insert(key, value);
         ASSERT_EQ(*hashTable.Find(key), value);
     }
 
     TEST(ChainHashTable, Delete) {
-        ChainHashTable<int, string> hashTable;
-        hashTable.Insert(5, "test5");
-        hashTable.Delete(5);
-        ASSERT_THROW(hashTable.Find(5), runtime_error);
+        ChainHashTable<string, int> hashTable;
+        hashTable.Insert("test5", 5);
+        hashTable.Delete("test5");
+        ASSERT_THROW(hashTable.Find("test5"), runtime_error);
     }
 
     TEST(ChainHashTable, FindNonExistentKey) {
-        ChainHashTable<int, string> hashTable;
-        ASSERT_THROW(hashTable.Find(100), runtime_error);
+        ChainHashTable<string, int> hashTable;
+        ASSERT_THROW(hashTable.Find("one"), runtime_error);
     }

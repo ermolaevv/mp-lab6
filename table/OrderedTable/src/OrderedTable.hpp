@@ -2,7 +2,7 @@ template<class Key, class Value>
 Value* OrderedTable<Key, Value>::Find(Key key)
 {
     int low = 0;
-    int high = this->data.size() - 1;
+    int high = static_cast<int>(this->data.size() - 1);
 
     while (low <= high) {
         int mid = low + (high - low) / 2;

@@ -8,12 +8,12 @@
 /// Класс хэш-таблиц на методе повторного перемешивания.
 /// </summary>
 template <class Key, class Value>
-class RepeatMixingTable : HashTable<Key, Value> {
+class RepeatMixingTable : public HashTable<Key, Value> {
 protected:
     typename Table<Key, Value>::STableRec<Key, Value>* data;
 public:
     RepeatMixingTable(size_t maxSize = 10000) : HashTable<Key, Value>(maxSize) {
-        this->data = new typename Table<Key, Value>::template STableRec<Key, Value>[this->maxSize];
+        this->data = new typename Table<Key, Value>::template STableRec<Key, Value>[this->maxSize] {};
     }
     ~RepeatMixingTable() { delete[] data; }
 

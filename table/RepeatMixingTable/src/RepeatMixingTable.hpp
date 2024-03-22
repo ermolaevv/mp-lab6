@@ -1,13 +1,13 @@
 #include "RepeatMixingTable.h"
 template <class Key, class Value>
 Value* RepeatMixingTable<Key, Value>::Find(Key key) {
-    size_t ind = this->GetHash(key, this->maxSize);
+    size_t ind = this->GetHash(key, static_cast<int>(this->maxSize));
 
-    while (data[ind].key != 0 && data[ind].key != key) {
+    while (data[ind].key != Key() && data[ind].key != key) {
         ind = (ind + 1) % this->maxSize;
     }
 
-    if (data[ind].key == 0) {
+    if (data[ind].key == Key()) {
         throw std::runtime_error("Key not found");
     }
 
@@ -23,13 +23,13 @@ void RepeatMixingTable<Key, Value>::Insert(Key key, Value value) {
     }
 
     size_t num = -1;
-    size_t ind = this->GetHash(key, this->maxSize);
+    size_t ind = this->GetHash(key, static_cast<int>(this->maxSize));
 
-    while (data[ind].key != 0 && data[ind].key != key) {
+    while (data[ind].key != Key() && data[ind].key != key) {
         ind = (ind + 1) % this->maxSize;
     }
 
-    if (data[ind].key == 0) {
+    if (data[ind].key == Key()) {
         num = ind;
     }
 
@@ -54,23 +54,23 @@ template <class Key, class Value>
 size_t RepeatMixingTable<Key, Value>::GoNext(void) noexcept {
     do {
         this->position = (this->position + 1) % this->maxSize;
-    } while (data[this->position].key == 0);
+    } while (data[this->position].key == Key());
     return this->position;
 }
 
 template <class Key, class Value>
 void RepeatMixingTable<Key, Value>::Delete(Key key) {
-    size_t ind = this->GetHash(key, this->maxSize);
+    size_t ind = this->GetHash(key, static_cast<int>(this->maxSize));
 
-    while (data[ind].key != 0 && data[ind].key != key) {
+    while (data[ind].key != Key() && data[ind].key != key) {
         ind = (ind + 1) % this->maxSize;
     }
 
-    if (data[ind].key == 0) {
+    if (data[ind].key == Key()) {
         throw std::runtime_error("Key not found");
     }
 
-    this->data[ind].key = 0;
+    this->data[ind].key = Key();
     this->length--;
 }
 
