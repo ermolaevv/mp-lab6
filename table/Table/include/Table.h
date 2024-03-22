@@ -20,6 +20,7 @@ protected:
             this->key = key;
             this->value = value;
         }
+        STableRec() : key(Key()), value(Value()) {}
     };
 
     /// <summary>

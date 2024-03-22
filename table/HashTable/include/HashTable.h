@@ -8,9 +8,9 @@
 /// Базовый класс хэш-таблиц. Абстрактный класс.
 /// </summary>
 template <class Key, class Value>
-class HashTable : Table<Key, Value> {
+class HashTable : public Table<Key, Value> {
 protected:
-    /// <summary>
+   /// <summary>
     /// Длина таблицы (количество элементов).
     /// </summary>
     size_t length = 0;
