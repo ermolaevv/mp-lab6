@@ -16,6 +16,13 @@ protected:
     /// </summary>
     static const size_t M = 11;
 
+    struct STableRec {
+        Key key;
+        Value value;
+
+        STableRec(const Key& key, const Value& value) : key(key), value(value) {}
+    };
+
     TDatList<typename Table<Key, Value>::template STableRec<Key, Value>> data[M];
 public:
     ChainHashTable(size_t maxSize = 10000) : HashTable<Key, Value>(maxSize) {}
