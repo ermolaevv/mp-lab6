@@ -3,7 +3,7 @@
 using namespace std;
 
 TEST(RedBlackTreeTableTest, InsertAndFind) {
-    RedBlackTreeTable<int, std::string> table;
+    RedBlackTreeTable<int, string> table;
 
     table.Insert(1, "One");
     table.Insert(2, "Two");
@@ -22,4 +22,36 @@ TEST(RedBlackTreeTableTest, InsertAndFind) {
     EXPECT_EQ(table.FindNode(3)->value, "Three");
 
     EXPECT_TRUE(table.FindNode(4) == nullptr);
+}
+
+TEST(RedBlackTreeTableTest, EmptyTree) {
+    RedBlackTreeTable<int, string> table;
+    EXPECT_TRUE(table.IsEmpty());
+
+    EXPECT_EQ(table.FindNode(1), nullptr);
+    EXPECT_EQ(table.FindNode(2), nullptr);
+    EXPECT_EQ(table.FindNode(3), nullptr);
+}
+
+TEST(RedBlackTreeTableTest, DeleteFromEmptyTree) {
+    RedBlackTreeTable<int, string> table;
+    EXPECT_THROW(table.Delete(1), std::runtime_error);
+}
+
+TEST(RedBlackTreeTableTest, DeleteExistingNode) {
+    RedBlackTreeTable<int, string> table;
+    table.Insert(1, "One");
+    table.Insert(2, "Two");
+    table.Insert(3, "Three");
+
+    table.Delete(2);
+    EXPECT_EQ(table.FindNode(2), nullptr);
+}
+
+TEST(RedBlackTreeTableTest, DeleteNonExistingNode) {
+    RedBlackTreeTable<int, string> table;
+    table.Insert(1, "One");
+    table.Insert(2, "Two");
+    table.Insert(3, "Three");
+    EXPECT_THROW(table.Delete(4), std::runtime_error);
 }

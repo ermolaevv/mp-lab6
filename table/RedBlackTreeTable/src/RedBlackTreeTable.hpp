@@ -95,7 +95,6 @@ void RedBlackTreeTable<Key, Value>::BalanceInsertion(SRBNode<Key, Value>* node)
             }
         }
     }
-    //this->pRoot->color = BLACK;
 }
 
 template<class Key, class Value>
