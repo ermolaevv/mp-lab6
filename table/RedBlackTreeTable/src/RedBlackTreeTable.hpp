@@ -31,22 +31,131 @@ void RedBlackTreeTable<Key, Value>::Insert(Key key, Value value)
 
 
 template<class Key, class Value>
-void RedBlackTreeTable<Key, Value>::Delete(Key key)
+void AVLTreeTable<Key, Value>::Delete(Key key)
 {
-    auto delete_Node = static_cast<SRBNode<Key, Value>*>(this->FindNode(key));
+    // Находим узел для удаления
+    SAVLNode<Key, Value>* deleteNode = static_cast<SAVLNode<Key, Value>*>(this->FindNode(key));
 
+    // Если узел не найден, просто возвращаемся
+    if (!deleteNode) return;
 
-    if (!delete_Node) { throw std::runtime_error("Key not found."); }
+    // Реализация удаления узла и балансировки дерева
 
-    Color delete_Node_Color = delete_Node->color;
+    // Если у удаляемого узла нет детей или только один ребенок
+    if (!deleteNode->pLeft || !deleteNode->pRight) {
+        SAVLNode<Key, Value>* child = deleteNode->pLeft ? deleteNode->pLeft : deleteNode->pRight;
 
-    delete_Node->key = Key{};
-    delete_Node->value = Value{};
-    delete_Node->color = BLACK; 
+        // Обработка случая, когда у удаляемого узла нет родителя (удаляемый узел - корень)
+        if (!deleteNode->pParent) {
+            this->pRoot = child;
+            if (child) child->pParent = nullptr;
+            delete deleteNode;
+            this->length--;
+            return;
+        }
 
-    if (delete_Node_Color == RED) { return; }
-    BalanceDeletion(delete_Node);
+        // Обработка случая, когда у удаляемого узла есть родитель
+        if (deleteNode == deleteNode->pParent->pLeft) {
+            deleteNode->pParent->pLeft = child;
+        }
+        else {
+            deleteNode->pParent->pRight = child;
+        }
+
+        if (child) child->pParent = deleteNode->pParent;
+        delete deleteNode;
+        this->length--;
+    }
+    else {
+        // Если у удаляемого узла есть оба ребенка
+
+        // Находим преемника (следующий по значению узел)
+        SAVLNode<Key, Value>* successor = static_cast<SAVLNode<Key, Value>*>(this->Successor(deleteNode));
+
+        // Копируем данные преемника в удаляемый узел
+        deleteNode->key = successor->key;
+        deleteNode->value = successor->value;
+
+        // Рекурсивно вызываем удаление для преемника
+        this->Delete(successor->key);
+    }
+
+    // Вызываем функцию для балансировки дерева после удаления
+    BalanceTreeAfterDeletion(deleteNode);
 }
+
+template<class Key, class Value>
+void AVLTreeTable<Key, Value>::BalanceTreeAfterDeletion(SAVLNode<Key, Value>* node)
+{
+    SAVLNode<Key, Value>* parent = nullptr;
+
+    // Балансируем дерево от удаленного узла к корню
+    while (node != nullptr) {
+        parent = static_cast<SAVLNode<Key, Value>*>(node->pParent);
+
+        if (parent == nullptr) break; // Достигли корня
+
+        // Обновляем баланс родителя
+        if (node == parent->pLeft) {
+            parent->balance--;
+        }
+        else {
+            parent->balance++;
+        }
+
+        // Если баланс стал -1 или 1, значит, высота поддерева уменьшилась, и может понадобиться дополнительная балансировка
+        if (parent->balance == -1 || parent->balance == 1) {
+            node = parent;
+            continue;
+        }
+
+        // Если баланс стал 0, значит, высота поддерева не изменилась, и дальнейшая балансировка не требуется
+        if (parent->balance == 0) {
+            break;
+        }
+
+        // Если баланс стал -2 или 2, значит, высота поддерева увеличилась и требуется балансировка
+        if (parent->balance == -2 || parent->balance == 2) {
+            SAVLNode<Key, Value>* grandparent = static_cast<SAVLNode<Key, Value>*>(parent->pParent);
+
+            if (parent->balance == -2) {
+                // У родителя сбалансированность -2, значит, правое поддерево увеличилось
+                // Нужно определить, куда именно добавился узел, чтобы правильно выполнить повороты
+
+                if (node == parent->pLeft) {
+                    // Удаляемый узел был слева от родителя
+                    // Сбалансированность правого поддерева родителя увеличилась, нужен поворот LL
+                    RotateRight(grandparent);
+                }
+                else {
+                    // Удаляемый узел был справа от родителя
+                    // Сбалансированность правого поддерева родителя не изменилась, нужен поворот LR
+                    RotateLeft(parent);
+                    RotateRight(grandparent);
+                }
+            }
+            else {
+                // Аналогично, только сбалансированность равна 2, значит, левое поддерево увеличилось
+
+                if (node == parent->pRight) {
+                    // Удаляемый узел был справа от родителя
+                    // Сбалансированность левого поддерева родителя увеличилась, нужен поворот RR
+                    RotateLeft(grandparent);
+                }
+                else {
+                    // Удаляемый узел был слева от родителя
+                    // Сбалансированность левого поддерева родителя не изменилась, нужен поворот RL
+                    RotateRight(parent);
+                    RotateLeft(grandparent);
+                }
+            }
+
+            // Балансировка завершена
+            break;
+        }
+    }
+}
+
 
 template<class Key, class Value>
 void RedBlackTreeTable<Key, Value>::BalanceInsertion(SRBNode<Key, Value>* node)
@@ -97,83 +206,7 @@ void RedBlackTreeTable<Key, Value>::BalanceInsertion(SRBNode<Key, Value>* node)
     }
 }
 
-template<class Key, class Value>
-void RedBlackTreeTable<Key, Value>::BalanceDeletion(SRBNode<Key, Value>* node)
-{
-    while (node != this->pRoot && (node == nullptr || node->color == BLACK)) {
-        if (node == node->pParent->pLeft) {
-            SRBNode<Key, Value>* brother = node->pParent->pRight;
 
-            if (brother->color == RED) {
-                // Случай 1: брат - узла красный
-                brother->color = BLACK;
-                node->pParent->color = RED;
-                LeftRotate(node->pParent);
-                brother = node->pParent->pRight;
-            }
-
-            if ((brother->pLeft == nullptr || brother->pLeft->color == BLACK) &&
-                (brother->pRight == nullptr || brother->pRight->color == BLACK)) {
-                // Случай 2: оба ребенка брата черные
-                brother->color = RED;
-                node = node->pParent;
-            }
-            else {
-                if (brother->pRight == nullptr || brother->pRight->color == BLACK) {
-                    // Случай 3: правый ребенок брата черный
-                    brother->pLeft->color = BLACK;
-                    brother->color = RED;
-                    RightRotate(brother);
-                    brother = node->pParent->pRight;
-                }
-
-                // Случай 4: правый ребенок брата красный
-                brother->color = node->pParent->color;
-                node->pParent->color = BLACK;
-                brother->pRight->color = BLACK;
-                LeftRotate(node->pParent);
-                node = static_cast<SRBNode<Key, Value>*>(this->pRoot);
-            }
-        }
-        else {
-            SRBNode<Key, Value>* brother = node->pParent->pLeft;
-
-            if (brother->color == RED) {
-                brother->color = BLACK;
-                node->pParent->color = RED;
-                RightRotate(node->pParent);
-                brother = node->pParent->pLeft;
-            }
-
-            if ((brother->pRight == nullptr || brother->pRight->color == BLACK) &&
-                (brother->pLeft == nullptr || brother->pLeft->color == BLACK)) {
-                brother->color = RED;
-                node = node->pParent;
-            }
-            else {
-                if (brother->pLeft == nullptr || brother->pLeft->color == BLACK) {
-                    // Случай 3: левый ребенок брата черный
-                    brother->pRight->color = BLACK;
-                    brother->color = RED;
-                    LeftRotate(brother);
-                    brother = node->pParent->pLeft;
-                }
-
-                // Случай 4: левый ребенок брата красный
-                brother->color = node->pParent->color;
-                node->pParent->color = BLACK;
-                brother->pLeft->color = BLACK;
-                RightRotate(node->pParent);
-                node = static_cast<SRBNode<Key, Value>*>(this->pRoot);
-            }
-        }
-    }
-
-    // узел всегда черный - важное свойство!!!
-    if (node != nullptr) {
-        node->color = BLACK;
-    }
-}
 
 template<class Key, class Value>
 void RedBlackTreeTable<Key, Value>::LeftRotate(TreeTable<Key, Value>::template SNode<Key, Value>* node)
