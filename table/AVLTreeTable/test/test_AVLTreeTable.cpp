@@ -26,3 +26,23 @@ TEST(AVLTreeTableTest, InsertionTest) {
 }
 
 
+
+//TEST(AVLTreeTableTest, DeletionTest) {
+//    AVLTreeTable<int, string> avlTree;
+//
+//    avlTree.Insert(10, "Value 10");
+//    avlTree.Insert(5, "Value 5");
+//    avlTree.Insert(15, "Value 15");
+//    avlTree.Insert(3, "Value 3");
+//    avlTree.Insert(7, "Value 7");
+//    avlTree.Insert(12, "Value 12");
+//    avlTree.Insert(17, "Value 17");
+//
+//    avlTree.Delete(3);
+//    avlTree.Delete(12);
+//    avlTree.Delete(15);
+//
+//    EXPECT_EQ(avlTree.Find(3), nullptr);
+//    EXPECT_EQ(avlTree.Find(12), nullptr);
+//    EXPECT_EQ(avlTree.Find(15), nullptr);
+//}
