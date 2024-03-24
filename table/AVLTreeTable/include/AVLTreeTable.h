@@ -40,6 +40,7 @@ public:
 protected:
 
     void BalanceTreeAfterInsertion(SAVLNode<Key, Value>* node);
+    void BalanceTreeAfterDeletion(SAVLNode<Key, Value>* node);
     void RotateRight(SAVLNode<Key, Value>* pivot);
     void RotateLeft(SAVLNode<Key, Value>* pivot);
 

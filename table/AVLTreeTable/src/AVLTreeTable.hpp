@@ -125,5 +125,100 @@ void AVLTreeTable<Key, Value>::RotateLeft(SAVLNode<Key, Value>* pivot)
 template<class Key, class Value>
 void AVLTreeTable<Key, Value>::Delete(Key key)
 {
-    return;
+    SAVLNode<Key, Value>* deleteNode = static_cast<SAVLNode<Key, Value>*>(TreeTable<Key, Value>::FindNode(key));
+
+    if (!deleteNode) return;
+
+    // Если у удаляемого узла нет детей или только один ребенок
+    if (!deleteNode->pLeft || !deleteNode->pRight) {
+        SAVLNode<Key, Value>* child = static_cast<SAVLNode<Key, Value>*>(deleteNode->pLeft ? deleteNode->pLeft : deleteNode->pRight);
+
+        // у удаляемого узла нет родителя (корень)
+        if (!deleteNode->pParent) {
+            this->pRoot = child;
+            if (child) child->pParent = nullptr;
+            delete deleteNode;
+            this->length--;
+            return;
+        }
+
+        // у удаляемого узла есть родитель
+        if (deleteNode == deleteNode->pParent->pLeft) { deleteNode->pParent->pLeft = child; }
+        else { deleteNode->pParent->pRight = child; }
+
+        if (child) child->pParent = deleteNode->pParent;
+        this->length--;
+    }
+    else {
+        // у удаляемого узла есть оба ребенка
+
+        // Находим преемника (следующий по значению узел)
+        SAVLNode<Key, Value>* successor = static_cast<SAVLNode<Key, Value>*>(deleteNode->pRight);
+        while (successor->pLeft) { successor = static_cast<SAVLNode<Key, Value>*>(successor->pLeft); }
+
+        // данные преемника в удаляемый узел
+        deleteNode->key = successor->key;
+        deleteNode->value = successor->value;
+
+        // Рекурсивно вызываем удаление для преемника
+        this->Delete(successor->key);
+    }
+    BalanceTreeAfterDeletion(deleteNode);
+    delete deleteNode;
+}
+
+template<class Key, class Value>
+void AVLTreeTable<Key, Value>::BalanceTreeAfterDeletion(SAVLNode<Key, Value>* node)
+{
+    SAVLNode<Key, Value>* parent = nullptr;
+
+    // Балансируем дерево от удаленного узла к корню
+    while (node != nullptr) {
+        parent = static_cast<SAVLNode<Key, Value>*>(node->pParent);
+
+        if (parent == nullptr) break;
+
+        // Обновляем баланс родителя
+        if (node == parent->pLeft) { parent->balance--; }
+        else { parent->balance++; }
+
+        // Если баланс стал -1 или 1, значит, высота поддерева уменьшилась, и может понадобиться дополнительная балансировка
+        if (parent->balance == -1 || parent->balance == 1) {
+            node = parent;
+            continue;
+        }
+
+        // Если баланс стал 0, значит, высота поддерева не изменилась
+        if (parent->balance == 0) { break; }
+
+        // Если баланс стал -2 или 2, значит, высота поддерева увеличилась
+        if (parent->balance == -2 || parent->balance == 2) {
+            SAVLNode<Key, Value>* grandparent = static_cast<SAVLNode<Key, Value>*>(parent->pParent);
+
+            if (parent->balance == -2) {
+                if (node == parent->pLeft) {
+                    // LL
+                    RotateRight(grandparent);
+                }
+                else {
+                    // LR
+                    RotateLeft(parent);
+                    RotateRight(grandparent);
+                }
+            }
+            else {
+
+                if (node == parent->pRight) {
+                    // RR
+                    RotateLeft(grandparent);
+                }
+                else {
+                    //  RL
+                    RotateRight(parent);
+                    RotateLeft(grandparent);
+                }
+            }
+            break;
+        }
+    }
 }
