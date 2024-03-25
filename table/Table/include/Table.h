@@ -73,7 +73,6 @@ public:
     /// Если ключа не найдено, поднимается исключение.
     /// </summary>
     virtual void Delete(Key key) = 0;
-
 #pragma endregion
 
 #pragma region Navigate
@@ -113,6 +112,8 @@ public:
     /// Если ключ не найден, поднимается исключение.
     /// </summary>
     virtual Value* GetValuePtr(void) const = 0;
+
+
 #pragma endregion
     // Печать таблицы
     friend std::ostream& operator<<(std::ostream& os, Table& tab)

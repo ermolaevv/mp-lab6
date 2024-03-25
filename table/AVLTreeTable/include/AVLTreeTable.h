@@ -8,7 +8,7 @@
 /// Класс таблиц на АВЛ дереве.
 /// </summary>
 template <class Key, class Value>
-class AVLTreeTable : TreeTable<Key, Value> {
+class AVLTreeTable : public TreeTable<Key, Value> {
 protected:
     /// <summary>
     /// Шаблонная стркутура узла дерева.
@@ -16,8 +16,9 @@ protected:
     template <class Key, class Value>
     struct SAVLNode : TreeTable<Key, Value>::template SNode<Key, Value> {
         int balance = 0;
-        SAVLNode(Key key, Value value) : SNode(key, value) {}
+        SAVLNode(Key key, Value value) : TreeTable<Key, Value>::template SNode<Key, Value>(key, value) {}
     };
+
 
 public:
     AVLTreeTable(size_t maxSize = 10000) : TreeTable<Key, Value>(maxSize) {}
@@ -35,6 +36,13 @@ public:
     /// Если ключа не найдено, поднимается исключение.
     /// </summary>
     void Delete(Key key) override;
+
+protected:
+
+    void BalanceTreeAfterInsertion(SAVLNode<Key, Value>* node);
+    void BalanceTreeAfterDeletion(SAVLNode<Key, Value>* node);
+    void RotateRight(SAVLNode<Key, Value>* pivot);
+    void RotateLeft(SAVLNode<Key, Value>* pivot);
 
 #pragma endregion
 

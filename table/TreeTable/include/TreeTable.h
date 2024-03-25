@@ -17,7 +17,9 @@ protected:
     struct SNode : Table<Key, Value>::template STableRec<Key, Value> {
         SNode* pLeft = nullptr;
         SNode* pRight = nullptr;
-        SNode(Key key, Value value) : STableRec(key, value) {}
+        SNode* pParent = nullptr; 
+        SNode(Key key, Value value) : Table<Key, Value>::template STableRec<Key, Value>(key, value) {}
+        SNode() : Table<Key, Value>::template STableRec<Key, Value>(Key(), Value()) {}
     };
 
     /// <summary>
@@ -84,6 +86,12 @@ public:
     /// </summary>
     Value* Find(Key key) override;
 
+    /// <summary>
+    /// Поиск узла по ключу.
+    /// Если узел найден, возвращает указатель на него.
+    /// Если узел не найден, возвращает nullptr.
+    /// </summary>
+    virtual SNode<Key, Value>* FindNode(Key key);
 #pragma endregion
 
 #pragma region Access

@@ -8,7 +8,7 @@
 /// Класс таблиц на красно-черном дереве.
 /// </summary>
 template <class Key, class Value>
-class RedBlackTreeTable : TreeTable<Key, Value> {
+class RedBlackTreeTable : public TreeTable<Key, Value> {
 protected:
     /// <summary>
     /// Перечисление цветов узлов
@@ -24,8 +24,13 @@ protected:
     template <class Key, class Value>
     struct SRBNode : TreeTable<Key, Value>::template SNode<Key, Value> {
         Color color;
-        SRBNode(Key key, Value value) : SNode(key, value) {}
+        SRBNode* pParent = nullptr;
+        SRBNode* pLeft = nullptr;
+        SRBNode* pRight = nullptr;
+        SRBNode(Key key, Value value) : TreeTable<Key, Value>::template SNode<Key, Value>(key, value) {}
     };
+
+
 public:
     RedBlackTreeTable(size_t maxSize = 10000) : TreeTable<Key, Value>(maxSize) {}
 
@@ -55,6 +60,34 @@ public:
         }
         return os;
     }
+private:
+#pragma region Auxiliary Methods
+
+    /// <summary>
+    /// Балансировка дерева после вставки нового узла.
+    /// </summary>
+    /// <param name="node">Новый узел.</param>
+    void BalanceInsertion(SRBNode<Key, Value>* node);
+
+    /// <summary>
+    /// Балансировка дерева после удаления узла.
+    /// </summary>
+    /// <param name="node">Удаленный узел.</param>
+    void BalanceDeletion(SRBNode<Key, Value>* node);
+
+    /// <summary>
+    /// Левый поворот вокруг узла.
+    /// </summary>
+    /// <param name="node">Узел, вокруг которого происходит поворот.</param>
+    void LeftRotate(TreeTable<Key, Value>::template SNode<Key, Value>* node);
+
+    /// <summary>
+    /// Правый поворот вокруг узла.
+    /// </summary>
+    /// <param name="node">Узел, вокруг которого происходит поворот.</param>
+    void RightRotate(TreeTable<Key, Value>::template SNode<Key, Value>* node);
+
+#pragma endregion
 };
 
 #include "../src/RedBlackTreeTable.hpp"
