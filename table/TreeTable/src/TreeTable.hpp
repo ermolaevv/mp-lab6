@@ -19,15 +19,17 @@ bool TreeTable<Key, Value>::IsFull() const noexcept
 template<class Key, class Value>
 size_t TreeTable<Key, Value>::Reset(void) noexcept
 {
+    this->position = 0;
     this->pActiveNode = this->pRoot;
     while (this->pActiveNode && this->pActiveNode->pLeft != nullptr) {  this->pActiveNode = this->pActiveNode->pLeft; }
+    while (this->pActiveNode->key == Key()) this->GoNext();
     return 0;
 }
 
 template<class Key, class Value>
 bool TreeTable<Key, Value>::IsTabEnded(void) const noexcept
 {
-    return this->pActiveNode == nullptr;
+    return this->pActiveNode == nullptr || this->position >= this->length;
 }
 
 template<class Key, class Value>
@@ -48,6 +50,10 @@ size_t TreeTable<Key, Value>::GoNext(void) noexcept
             if (this->pActiveNode->pLeft == pPrevNode) { break; }
         }
     }
+
+    if (this->pActiveNode->key == Key()) { return this->GoNext(); }
+
+    this->position++;
     return 0;
 }
 

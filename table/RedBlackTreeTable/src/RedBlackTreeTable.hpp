@@ -23,10 +23,17 @@ void RedBlackTreeTable<Key, Value>::Insert(Key key, Value value)
         new_Node->pParent = static_cast<SRBNode<Key, Value>*>(parent);
 
         // новый узел или как левый, или правый потомок в зависимости от значения ключа
-        if (key < parent->key) { parent->pLeft = new_Node; }
-        else { parent->pRight = new_Node; }
+        if (key < parent->key) {
+            parent->pLeft = new_Node;
+            parent->pLeft->pParent = parent;
+        }
+        else {
+            parent->pRight = new_Node;
+            parent->pRight->pParent = parent;
+        }
     }
     BalanceInsertion(new_Node);
+    this->length++;
 }
 
 
@@ -44,6 +51,7 @@ void RedBlackTreeTable<Key, Value>::Delete(Key key)
     delete_Node->value = Value{};
     delete_Node->color = BLACK; 
 
+    this->length--;
     if (delete_Node_Color == RED) { return; }
     BalanceDeletion(delete_Node);
 }

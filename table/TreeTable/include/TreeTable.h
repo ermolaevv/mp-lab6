@@ -8,7 +8,7 @@
 /// Базовый класс таблиц на деревьях. Абстрактный класс.
 /// </summary>
 template <class Key, class Value>
-class TreeTable : Table<Key, Value> {
+class TreeTable : public Table<Key, Value> {
 protected:
     /// <summary>
     /// Шаблонная стркутура узла дерева.
