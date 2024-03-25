@@ -58,4 +58,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     "table/Table/include"
     "table/VectorTable/include"
     "table/ListTable/include"
+    "table/TreeTable/include"
+    "table/RedBlackTreeTable/include"
+    "table/AVLTreeTable/include"
+    "table/HashTable/include"
+    "table/ChainHashTable/include"
+    "table/RepeatMixingTable/include"
 )
