@@ -1,5 +1,5 @@
 #include "ChainHashTable.h"
-template <class Key, class Value>
+template <class Key, class Value> 
 Value* ChainHashTable<Key, Value>::Find(Key key) {
     size_t index = this->GetHash(key, M);
     auto& list = this->data[index];
@@ -29,7 +29,15 @@ void ChainHashTable<Key, Value>::Insert(Key key, Value value) {
             return;
         }
     }
-    list.InsCurrent(new Table<Key, Value>::STableRec<Key, Value>(key, value));
+    auto rec = new Table<Key, Value>::template STableRec<Key, Value>(key, value);
+    if (list.GetCurrentPos() != 0)
+        list.SetCurrentPos(list.GetCurrentPos() - 1);
+    list.InsCurrent(rec);
+
+    if (this->actriveRec == nullptr) {
+        this->actriveRec = rec;
+    }
+
     this->length++;
 }
 
@@ -40,9 +48,13 @@ void ChainHashTable<Key, Value>::Delete(Key key) {
 
     for (list.Reset(); !list.IsListEnded(); list.GoNext()) {
         auto rec = list.GetDatValue();
+        auto recKey = rec->key;
         if (rec->key == key) {
             list.DelCurrent();
             this->length--;
+
+            if (recKey == this->actriveRec->key)
+                this->GoNext();
             return;
         }
     }
@@ -51,21 +63,34 @@ void ChainHashTable<Key, Value>::Delete(Key key) {
 
 template <class Key, class Value>
 size_t ChainHashTable<Key, Value>::Reset(void) noexcept {
-    this->position = 0;
-    this->actriveRec = nullptr;
-    return 0;
+    this->positionInData = 0;
+    data[this->positionInData].Reset();
+    this->GoNext();
+    return this->position = 0;
 }
 
 template <class Key, class Value>
 size_t ChainHashTable<Key, Value>::GoNext(void) noexcept {
-    while (this->position < M && this->data[this->position].GetLength() == 0) {
-        this->position++;
+    if (this->length == 0)
+        return 0;
+
+    if (!this->data[this->positionInData].IsListEnded()) {
+        this->actriveRec = this->data[this->positionInData].GetDatValue();
+        this->data[this->positionInData].GoNext();
+        return ++this->position;
     }
-    if (this->position < M) {
-        this->actriveRec = this->data[this->position].GetFirst()->GetDatValue();
-        this->position++;
-        return this->position - 1;
+    else {
+        do {
+            this->positionInData++;
+        } while (this->positionInData < M && this->data[this->positionInData].GetLength() == 0);
+
+        if (this->positionInData < M) {
+            this->data[this->positionInData].Reset();
+            return this->GoNext();
+        }
     }
-    this->actriveRec = nullptr;
-    return M;
+
+    this->positionInData = 0;
+    this->data[this->positionInData].Reset();
+    return this->GoNext();
 }
