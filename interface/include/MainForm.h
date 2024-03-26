@@ -83,7 +83,7 @@ namespace TableLab {
             UpdateAllData();
 
             this->textBox1->Text = "new_pol";
-            this->richTextBox1->Text = "2 * pol1+ 2 * pol2 +3.6 * q - const6";
+            this->richTextBox1->Text = "2 * pol1 + 2 * pol2 + 3.6 * q - const6";
 		}
 
 	protected:
@@ -1260,7 +1260,7 @@ namespace TableLab {
 
     private: TPolinom ParsePolinom(std::string pol, int cVar) {
         std::string word;
-        std::smatch match;
+        std::smatch match, match1;
         VectorTable<std::string, TPolinom> tmpTable;
 
         std::stringstream ss(pol);
@@ -1295,7 +1295,8 @@ namespace TableLab {
                 tmp.AddMonom(monom);
 
                 std::string name = "_tmp" + std::to_string(tmpTable.GetDataCount());
-                pol.replace(pol.find(word), word.size(), name);
+                std::regex_search(pol, match1, std::regex("\\b-?[\\d\\.,]+(\\*x\\d(\\^\\d)?)*"));
+                pol.replace(match1.position(), word.size(), name);
 
                 tmpTable.Insert(name, tmp);
             }
