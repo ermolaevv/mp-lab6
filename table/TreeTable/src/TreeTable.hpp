@@ -40,7 +40,7 @@ size_t TreeTable<Key, Value>::GoNext(void) noexcept
 
     if (this->pActiveNode->pRight != nullptr) {
         this->pActiveNode = this->pActiveNode->pRight;
-        while (this->pActiveNode->pLeft != nullptr) 
+        while (this->pActiveNode->pLeft != nullptr)
             this->pActiveNode = this->pActiveNode->pLeft;
     }
     else {
