@@ -15,6 +15,11 @@ protected:
     /// </summary>
     size_t length = 0;
 
+   /// <summary>
+    /// Позиция активной записи в структуре данных. 
+    /// </summary>
+    size_t positionInData = 0;
+
     /// <summary>
     /// Указатель на активную запись.
     /// Перемещается вместе с полем position в методе GoNext

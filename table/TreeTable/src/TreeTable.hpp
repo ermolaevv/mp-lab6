@@ -21,23 +21,26 @@ size_t TreeTable<Key, Value>::Reset(void) noexcept
 {
     this->pActiveNode = this->pRoot;
     while (this->pActiveNode && this->pActiveNode->pLeft != nullptr) {  this->pActiveNode = this->pActiveNode->pLeft; }
+    while (this->pActiveNode && this->pActiveNode->key == Key()) this->GoNext();
+    this->position = 0;
     return 0;
 }
 
 template<class Key, class Value>
 bool TreeTable<Key, Value>::IsTabEnded(void) const noexcept
 {
-    return this->pActiveNode == nullptr;
+    return this->pActiveNode == nullptr || this->position >= this->length;
 }
 
 template<class Key, class Value>
 size_t TreeTable<Key, Value>::GoNext(void) noexcept
 {
+    if (this->position == this->length - 1) { return ++this->position; }
     if (this->pActiveNode == nullptr) { return 0; }
 
     if (this->pActiveNode->pRight != nullptr) {
         this->pActiveNode = this->pActiveNode->pRight;
-        while (this->pActiveNode->pLeft != nullptr) 
+        while (this->pActiveNode->pLeft != nullptr)
             this->pActiveNode = this->pActiveNode->pLeft;
     }
     else {
@@ -48,6 +51,10 @@ size_t TreeTable<Key, Value>::GoNext(void) noexcept
             if (this->pActiveNode->pLeft == pPrevNode) { break; }
         }
     }
+
+    if (this->pActiveNode->key == Key()) { return this->GoNext(); }
+
+    this->position++;
     return 0;
 }
 
@@ -80,7 +87,22 @@ typename TreeTable<Key, Value>::template SNode<Key, Value>* TreeTable<Key, Value
             currentNode = currentNode->pRight;
         }
     }
-    return nullptr;
+
+    auto tmpActiveNode = this->pActiveNode;
+    auto tmpPosition = this->position;
+
+    currentNode = nullptr;
+    for (this->Reset(); !this->IsTabEnded(); this->GoNext()) {
+        if (this->pActiveNode->key == key) {
+            currentNode = this->pActiveNode;
+            break;
+        }
+    }
+
+    this->pActiveNode = tmpActiveNode;
+    this->position = tmpPosition;
+
+    return currentNode;
 }
 
 

@@ -37,24 +37,29 @@ TDatList<T>::TDatList()
 }
 
 template<class T>
-TDatList<T>::TDatList(const TDatList& q)
+TDatList<T>::TDatList(const TDatList& q) : TDatList()
 {
 	ListLen = q.ListLen;
 
-	pFirst = q.pFirst->GetCopy(q.pFirst->GetNextDatLink());
-	pStop = q.pStop->GetCopy();
-	pCurrLink = pFirst;
+    if (ListLen != 0) {
+        TDatLink<T>* pNext;
+        pNext = q.pFirst->GetNextDatLink();
+        pFirst = q.pFirst->GetCopy(pNext);
+        pCurrLink = pFirst;
 
-	for (size_t i = 0; i < ListLen - 1; i++) {
-		pPrevLink = pCurrLink;
-		pCurrLink = pCurrLink->GetNextDatLink();
-		pCurrLink = pCurrLink->GetCopy(pCurrLink->GetNextDatLink());
-		pPrevLink->SetNextLink(pCurrLink);
-	}
+        for (int i = 0; i < ListLen - 1; i++) {
+            pPrevLink = pCurrLink;
+            pCurrLink = pCurrLink->GetNextDatLink();
+            pCurrLink = pCurrLink->GetCopy(pCurrLink->GetNextDatLink());
+            pPrevLink->SetNextLink(pCurrLink);
+        }
 
-	pLast = pCurrLink;
-	pLast->SetNextLink(pStop);
-	SetCurrentPos(q.CurrPos);
+        pLast = pCurrLink;
+        pLast->SetNextLink(pStop);
+
+        SetCurrentPos(q.CurrPos);
+    }
+
 }
 
 template<class T>
@@ -101,8 +106,8 @@ int TDatList<T>::Reset(void)
 template<class T>
 int TDatList<T>::IsListEnded(void) const
 {
-    if (pCurrLink == NULL) return NULL;
-	return pCurrLink == pStop;
+    if (pCurrLink == NULL) return 1;
+    return ListLen == 0 || CurrPos >= ListLen;
 }
 
 template<class T>
@@ -111,10 +116,12 @@ int TDatList<T>::GoNext(void)
 	if (IsListEnded()) {
 		throw std::exception("List is ended");
 	}
+    if (pCurrLink == NULL)
+        return CurrPos;
 
 	pPrevLink = pCurrLink;
 	pCurrLink = pCurrLink->GetNextDatLink();
-	CurrPos = ++CurrPos % ListLen;
+	CurrPos = ++CurrPos;
 	return CurrPos;
 }
 
@@ -138,7 +145,9 @@ template<class T>
 void TDatList<T>::InsLast(T* pVal)
 {
 	TDatLink<T>* tmp = new TDatLink<T>(pVal, pStop);
-	if (pFirst == NULL && ListLen == 0) {
+	if (ListLen == 0) {
+        if (pFirst != NULL)
+            delete pFirst;
 		pFirst = tmp;
 		pLast = pCurrLink = pFirst;
 	}
@@ -152,18 +161,17 @@ void TDatList<T>::InsLast(T* pVal)
 template<class T>
 void TDatList<T>::InsCurrent(T* pVal)
 {
-	TDatLink<T>* tmp = new TDatLink<T>(pVal);
-	if (pFirst == NULL && ListLen == 0) {
-		pFirst = new TDatLink<T>(pVal, pStop);
-		pLast = pCurrLink = pFirst;
-	}
-	else {
-		if (pCurrLink->pNext == pStop) {
-			pLast = tmp;
-		}
+    if (ListLen == 0) {
+        InsFirst(pVal);
+    }
+    else if (pCurrLink == pLast) {
+        InsLast(pVal);
+    }
+    else {
+	    TDatLink<T>* tmp = new TDatLink<T>(pVal);
 		pCurrLink->InsNextLink(tmp);
+	    ListLen++;
 	}
-	ListLen++;
 }
 
 template<class T>
@@ -171,7 +179,10 @@ void TDatList<T>::DelFirst(void)
 {
 	if (pFirst != NULL) {
 		TDatLink<T>* prev = pFirst;
-		pFirst = (TDatLink<T>*)pFirst->GetNextLink();
+        if (pFirst->GetNextLink() == pStop)
+            pFirst = NULL;
+        else
+            pFirst = (TDatLink<T>*)pFirst->GetNextLink();
 		if (pCurrLink == prev)
 			pCurrLink = pFirst;
 		delete prev;
@@ -187,13 +198,19 @@ void TDatList<T>::DelCurrent(void)
         DelFirst();
         return;
     }
-
     if (pCurrLink == pLast) {
-        pLast = pPrevLink;
+        pCurrLink = pPrevLink;
+        pCurrLink->SetNextLink(pLast->GetNextLink());
+        delete pLast;
+        pLast = pCurrLink;
+        pPrevLink = nullptr;
+		ListLen--;
+        return;
     }
 	if (pCurrLink != NULL) {
 		TDatLink<T>* prev = pCurrLink;
 		pCurrLink = (TDatLink<T>*)pCurrLink->GetNextLink();
+        pPrevLink->SetNextLink(pCurrLink);
 		delete prev;
 		ListLen--;
 	}
@@ -226,20 +243,21 @@ TDatList<T>& TDatList<T>::operator=(const TDatList& q)
         return *this;
 	ListLen = q.ListLen;
 
-	pFirst = q.pFirst->GetCopy(q.pFirst->GetNextDatLink());
-	pStop = q.pStop->GetCopy();
-	pCurrLink = pFirst;
+    if (q.pFirst != NULL) {
+        pFirst = q.pFirst->GetCopy(q.pFirst->GetNextDatLink());
+        pStop = q.pStop->GetCopy();
+        pCurrLink = pFirst;
 
-	for (size_t i = 0; i < ListLen - 1; i++) {
-		pPrevLink = pCurrLink;
-		pCurrLink = pCurrLink->GetNextDatLink();
-		pCurrLink = pCurrLink->GetCopy(pCurrLink->GetNextDatLink());
-		pPrevLink->SetNextLink(pCurrLink);
-	}
+        for (size_t i = 0; i < ListLen - 1; i++) {
+            pPrevLink = pCurrLink;
+            pCurrLink = pCurrLink->GetNextDatLink();
+            pCurrLink = pCurrLink->GetCopy(pCurrLink->GetNextDatLink());
+            pPrevLink->SetNextLink(pCurrLink);
+        }
 
-	pLast = pCurrLink;
-	pLast->SetNextLink(pStop);
-	SetCurrentPos(q.CurrPos);
-
+        pLast = pCurrLink;
+        pLast->SetNextLink(pStop);
+        SetCurrentPos(q.CurrPos);
+    }
 	return *this;
 }

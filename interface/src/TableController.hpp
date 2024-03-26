@@ -1,5 +1,20 @@
 #include "TableController.h"
 template<class Key, class Value>
+std::string TableController<Key, Value>::GetActiveName(void) noexcept
+{
+    for (auto& table : tables)
+        if (table.second == activeTable)
+            return table.first;
+    return std::string();
+}
+
+template<class Key, class Value>
+inline size_t TableController<Key, Value>::GetRecCount(void)
+{
+    return this->activeTable->GetDataCount();
+}
+
+template<class Key, class Value>
 Value* TableController<Key, Value>::Find(Key key)
 {
     if (this->activeTable == nullptr)
@@ -80,4 +95,35 @@ void TableController<Key, Value>::RemoveTable(std::string name)
 
     if (tables.size() == 0)
         this->activeTable = nullptr;
+}
+
+template<class Key, class Value>
+size_t TableController<Key, Value>::Reset(void) noexcept
+{
+    return this->activeTable->Reset();
+}
+
+template<class Key, class Value>
+bool TableController<Key, Value>::IsTabEnded(void) const noexcept
+{
+    if (this->activeTable->GetDataCount() == 0) return 0;
+    return this->activeTable->IsTabEnded();
+}
+
+template<class Key, class Value>
+size_t TableController<Key, Value>::GoNext(void) noexcept
+{
+    return this->activeTable->GoNext();
+}
+
+template<class Key, class Value>
+Key TableController<Key, Value>::GetKey(void) const
+{
+    return this->activeTable->GetKey();
+}
+
+template<class Key, class Value>
+Value* TableController<Key, Value>::GetValuePtr(void) const
+{
+    return this->activeTable->GetValuePtr();
 }

@@ -46,16 +46,19 @@ void RepeatMixingTable<Key, Value>::Insert(Key key, Value value) {
 
 template <class Key, class Value>
 size_t RepeatMixingTable<Key, Value>::Reset(void) noexcept {
-    this->position = 0;
-    return 0;
+    this->positionInData = 0;
+    this->GoNext();
+    return this->position = 0;
 }
 
 template <class Key, class Value>
 size_t RepeatMixingTable<Key, Value>::GoNext(void) noexcept {
     do {
-        this->position = (this->position + 1) % this->maxSize;
-    } while (data[this->position].key == Key());
-    return this->position;
+        this->positionInData = (this->positionInData + 1) % this->maxSize;
+    } while (data[this->positionInData].key == Key());
+
+    this->actriveRec = &data[this->positionInData];
+    return ++this->position;
 }
 
 template <class Key, class Value>
