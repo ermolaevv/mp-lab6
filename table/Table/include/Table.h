@@ -16,6 +16,11 @@ protected:
     struct STableRec {
         Key key;
         Value value;
+        STableRec(Key key, Value value) {
+            this->key = key;
+            this->value = value;
+        }
+        STableRec() : key(Key()), value(Value()) {}
     };
 
     /// <summary>
@@ -68,7 +73,6 @@ public:
     /// Если ключа не найдено, поднимается исключение.
     /// </summary>
     virtual void Delete(Key key) = 0;
-
 #pragma endregion
 
 #pragma region Navigate
@@ -94,6 +98,7 @@ public:
     /// Возвращает новую позицию.
     /// </summary>
     virtual size_t GoNext(void) noexcept = 0;
+#pragma endregion
 
 #pragma region Access
     /// <summary>
@@ -106,13 +111,16 @@ public:
     /// Получить значение активной записи.
     /// Если ключ не найден, поднимается исключение.
     /// </summary>
-    virtual Value GetValuePtr(void) const = 0;
+    virtual Value* GetValuePtr(void) const = 0;
+
+
 #pragma endregion
     // Печать таблицы
     friend std::ostream& operator<<(std::ostream& os, Table& tab)
     {
         std::cout << "Table printing" << std::endl;
-        for (tab.Reset(); !tab.IsTabEnded(); tab.GoNext())
+        tab.Reset();
+        for (size_t i = 0; i < tab.GetDataCount(); i++, tab.GoNext())
         {
             os << " Key: " << tab.GetKey() << " Val: " << *tab.GetValuePtr() << std::endl;
         }

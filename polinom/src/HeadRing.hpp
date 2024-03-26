@@ -1,3 +1,4 @@
+#include "HeadRing.h"
 template<class T>
 THeadRing<T>::THeadRing()
 {
@@ -9,7 +10,8 @@ THeadRing<T>::THeadRing(const THeadRing<T>& q) : TDatList<T>(q)
 {
 	this->pHead = q.pHead->GetCopy();
 	this->pHead->SetNextLink(this->pFirst);
-	this->pLast->SetNextLink(this->pHead);
+    if (this->pLast != NULL)
+        this->pLast->SetNextLink(this->pHead);
 }
 
 template<class T>
@@ -38,10 +40,15 @@ void THeadRing<T>::DelFirst(void)
 template<class T>
 int THeadRing<T>::GoNext(void)
 {
-	if (this->pCurrLink->GetNextDatLink() == this->pHead) {
+	if (++this->CurrPos == this->ListLen) {
 		this->pCurrLink = this->pHead;
+        this->CurrPos %= this->ListLen;
 	}
-	return TDatList<T>::GoNext();
+
+    this->pPrevLink = this->pCurrLink;
+    this->pCurrLink = this->pCurrLink->GetNextDatLink();
+
+    return this->CurrPos;
 }
 
 template<class T>
@@ -74,6 +81,14 @@ void THeadRing<T>::DelList(void)
 		delete this->pHead;
 		this->pHead = NULL;
 	}
+}
+
+template<class T>
+int THeadRing<T>::IsListEnded(void) const
+{
+    if (this->pCurrLink == NULL) return true;
+    if (this->ListLen == 0) return  true;
+    return this->pPrevLink == this->pHead;
 }
 
 template<class T>

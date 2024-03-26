@@ -12,7 +12,7 @@
 template <class Key, class Value>
 class VectorTable : public Table<Key,Value> {
 protected:
-    std::vector<typename Table<Key, Value>::template STableRec<Key, Value>> data;
+    mutable std::vector<typename Table<Key, Value>::template STableRec<Key, Value>> data;
 public:
     VectorTable(size_t maxSize = 10000) : Table<Key, Value>(maxSize) { }
     ~VectorTable() { }
@@ -81,7 +81,7 @@ public:
     /// Получить значение активной записи.
     /// Если ключ не найден, поднимается исключение.
     /// </summary>
-    Value GetValuePtr(void) const override;
+    Value* GetValuePtr(void) const override;
 #pragma endregion
 
     /// <summary>

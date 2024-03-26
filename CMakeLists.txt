@@ -17,8 +17,20 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEAS
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 enable_testing()
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/gtest)
-add_subdirectory(gtest)
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  # Specify the commit you depend on and update it regularly.
+  URL https://github.com/google/googletest/archive/5376968f6948923e2411081fd9372e71a59d8e77.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+set_target_properties(gtest PROPERTIES FOLDER 3rdparty/${nameBaseProj})
+set_target_properties(gtest_main PROPERTIES FOLDER 3rdparty/${nameBaseProj})
+set_target_properties(gmock PROPERTIES FOLDER 3rdparty/${nameBaseProj})
+set_target_properties(gmock_main PROPERTIES FOLDER 3rdparty/${nameBaseProj})
+
 add_subdirectory(polinom)
 add_subdirectory(postfix)
 add_subdirectory(table)
@@ -46,4 +58,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     "table/Table/include"
     "table/VectorTable/include"
     "table/ListTable/include"
+    "table/TreeTable/include"
+    "table/RedBlackTreeTable/include"
+    "table/AVLTreeTable/include"
+    "table/HashTable/include"
+    "table/ChainHashTable/include"
+    "table/RepeatMixingTable/include"
 )

@@ -1,8 +1,12 @@
 #ifndef _POLINOM_LIB_TPOLIMOM_
 #define _POLINOM_LIB_TPOLINOM_
 
+#include <vector>
+#include <map>
+
 #include "HeadRing.h"
 #include "Monom.h"
+#include "../../postfix/include/MyExpression.h"
 
 class TPolinom : public THeadRing<TMonom> {
 protected:
@@ -29,12 +33,17 @@ public:
 	TPolinom operator*(const TMonom& coef);
 	TPolinom operator*(const TPolinom& other);
 
+    TPolinom Integrate(int variable) const;
+    TPolinom Differentiation(int variable) const;
+
 	TPolinom& operator=(const TPolinom& q); // присваивание
 	bool operator==(const TPolinom& other) const;
+    double CalculateDefiniteIntegral(int variable, double* start, double* end) const;
 
 	std::string ToString(void);
 	friend std::ostream& operator<<(std::ostream& ostr, TPolinom& q);
 
+    double Calculate(const int countVar, const double* value);
 };
 
 TPolinom::TPolinom(const int cVar, const int** monoms, const int len)
@@ -252,6 +261,30 @@ std::string TPolinom::ToString()
     return res;
 }
 
+double TPolinom::Calculate(const int countVar, const double* value)
+{
+    if (this->countVar != countVar)
+        throw std::runtime_error("The number of variables is different");
+    if (value == nullptr)
+        throw std::runtime_error("Value's array is nullptr");
+
+    std::string pol = this->ToString();
+    TArithmeticExpression expr(pol);
+    std::vector<std::string> valNames = expr.GetOperands();
+
+    std::map<std::string, double> op;
+    int i = 0;
+    for (auto valName : valNames) {
+        if (i >= countVar)
+            break;
+
+        op.insert(std::pair<std::string, double>(valName, value[i]));
+        i++;
+    }
+
+    return expr.Calculate(op);
+}
+
 TPolinom TPolinom::operator+(const TPolinom& q)
 {
     if (countVar != q.countVar)
@@ -311,4 +344,38 @@ std::ostream& operator<<(std::ostream& ostr, TPolinom& q)
     return ostr << q.ToString();
 }
 
+TPolinom TPolinom::Integrate(int variable) const {
+    if (variable >= countVar) { throw std::invalid_argument("Invalid variable number"); }
+
+    TPolinom res(countVar);
+    TDatLink<TMonom>* tmp = pFirst;
+    while (tmp != pHead) {
+        const TMonom* monom = tmp->GetDatValue();
+        TMonom integrate_monom = monom->Integrate_Monom(variable);
+        res.AddMonom(integrate_monom);
+        tmp = tmp->GetNextDatLink();
+    }
+    return res;
+}
+
+TPolinom TPolinom::Differentiation(int variable) const {
+    if (variable >= countVar) { throw std::invalid_argument("Invalid variable number"); }
+
+    TPolinom res(countVar);
+    TDatLink<TMonom>* tmp = pFirst;
+    while (tmp != pHead) {
+        const TMonom* monom = tmp->GetDatValue();
+        TMonom diff_monom = monom->Differentiation_Monom(variable);
+        res.AddMonom(diff_monom);
+        tmp = tmp->GetNextDatLink();
+    }
+    return res;
+}
+
+double TPolinom::CalculateDefiniteIntegral(int variable, double* start, double* end) const {
+    TPolinom integrated_P = this->Integrate(variable);
+    double end_value = integrated_P.Calculate(countVar, end);
+    double start_value = integrated_P.Calculate(countVar, start);
+    return end_value - start_value;
+}
 #endif

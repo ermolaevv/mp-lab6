@@ -41,6 +41,10 @@ public:
 	
 	TMonom& operator=(const TMonom& tm);
 
+    TMonom Integrate_Monom(int variable) const;
+    TMonom Differentiation_Monom(int variable) const;
+
+
 	bool operator==(const TMonom& tm) const;
 	int operator<(const TMonom& mon);
 	int operator<(const TMonom& mon) const;
@@ -349,6 +353,33 @@ bool TMonom::operator==(const TMonom& mon) const
     if (!std::equal(Deg, Deg + CountDeg, mon.Deg))
         return false;
     return true;
+}
+
+TMonom TMonom::Integrate_Monom(int variable) const {
+    if (variable >= CountDeg) { throw std::invalid_argument("Incorrect variable number"); }
+
+    double new_Coeff = Coeff / (Deg[variable] + 1);
+
+    int* new_Deg = new int[CountDeg];
+    for (int i = 0; i < CountDeg; i++) {
+        new_Deg[i] = Deg[i];
+    }
+    new_Deg[variable]++;
+    return TMonom(new_Coeff, CountDeg, new_Deg);
+}
+
+TMonom TMonom::Differentiation_Monom(int variable) const {
+    if (variable >= CountDeg) { throw std::invalid_argument("Incorrect variable number"); }
+
+    double new_Coeff = Coeff * Deg[variable];
+  
+    int* new_Deg = new int[CountDeg];
+    for (int i = 0; i < CountDeg; i++) {
+        new_Deg[i] = Deg[i];
+    }
+    if (Deg[variable] > 0) { new_Deg[variable]--; }
+    else { new_Coeff = 0;  }
+    return TMonom(new_Coeff, CountDeg, new_Deg);
 }
 
 
