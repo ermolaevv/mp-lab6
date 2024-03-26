@@ -20,16 +20,18 @@ void RedBlackTreeTable<Key, Value>::Insert(Key key, Value value)
             else { current = current->pRight; }
         }
 
-        new_Node->pParent = static_cast<SRBNode<Key, Value>*>(parent);
+        new_Node->SetParent(static_cast<SRBNode<Key, Value>*>(parent));
 
         // новый узел или как левый, или правый потомок в зависимости от значения ключа
+        
+        auto rbParent = static_cast<SRBNode<Key, Value>*>(parent);
         if (key < parent->key) {
-            parent->pLeft = new_Node;
-            parent->pLeft->pParent = parent;
+            rbParent->SetLeft(new_Node);
+            rbParent->pRBLeft->SetParent(rbParent);
         }
         else {
-            parent->pRight = new_Node;
-            parent->pRight->pParent = parent;
+            rbParent->SetRight(new_Node);
+            rbParent->pRBRight->SetParent(rbParent);
         }
     }
     BalanceInsertion(new_Node);
@@ -59,47 +61,47 @@ void RedBlackTreeTable<Key, Value>::Delete(Key key)
 template<class Key, class Value>
 void RedBlackTreeTable<Key, Value>::BalanceInsertion(SRBNode<Key, Value>* node)
 {
-    while (node != this->pRoot && node->pParent->color == RED) {
+    while (node != this->pRoot && node->pRBParent->color == RED) {
 
         // Если новый вставленный узел является левым потомком
-        if (node->pParent == node->pParent->pParent->pLeft) {
-            SRBNode<Key, Value>* uncle = node->pParent->pParent->pRight;
+        if (node->pRBParent == node->pRBParent->pRBParent->pRBLeft) {
+            SRBNode<Key, Value>* uncle = node->pRBParent->pRBParent->pRBRight;
 
             // Случай 1: дядя узла красный
             if (uncle && uncle->color == RED) {
-                node->pParent->color = BLACK;
+                node->pRBParent->color = BLACK;
                 uncle->color = BLACK;
-                node->pParent->pParent->color = RED;
-                node = node->pParent->pParent;
+                node->pRBParent->pRBParent->color = RED;
+                node = node->pRBParent->pRBParent;
             }
             else {
                 // Случай 2: в этом случае дядя узла является черным, и узел находится справа от родителя, то есть он является правым потомком (и последним)
-                if (node == node->pParent->pRight) {
-                    node = node->pParent;
+                if (node == node->pRBParent->pRBRight) {
+                    node = node->pRBParent;
                     LeftRotate(node);
                 }
                 // Случай 3: когда дядя черный, а узел является левым потомком, выполняется правило красно-черного дерева, что оба ребенка красного узла должны быть черными
-                node->pParent->color = BLACK;
-                node->pParent->pParent->color = RED;
-                RightRotate(node->pParent->pParent);
+                node->pRBParent->color = BLACK;
+                node->pRBParent->pRBParent->color = RED;
+                RightRotate(node->pRBParent->pRBParent);
             }
         }
         else {
-            SRBNode<Key, Value>* uncle = node->pParent->pParent->pLeft;
+            SRBNode<Key, Value>* uncle = node->pRBParent->pRBParent->pRBLeft;
             if (uncle && uncle->color == RED) {
-                node->pParent->color = BLACK;
+                node->pRBParent->color = BLACK;
                 uncle->color = BLACK;
-                node->pParent->pParent->color = RED;
-                node = node->pParent->pParent;
+                node->pRBParent->pRBParent->color = RED;
+                node = node->pRBParent->pRBParent;
             }
             else {
-                if (node == node->pParent->pLeft) {
-                    node = node->pParent;
+                if (node == node->pRBParent->pLeft) {
+                    node = node->pRBParent;
                     RightRotate(node);
                 }
-                node->pParent->color = BLACK;
-                node->pParent->pParent->color = RED;
-                LeftRotate(node->pParent->pParent);
+                node->pRBParent->color = BLACK;
+                node->pRBParent->pRBParent->color = RED;
+                LeftRotate(node->pRBParent->pRBParent);
             }
         }
     }
@@ -110,68 +112,68 @@ void RedBlackTreeTable<Key, Value>::BalanceDeletion(SRBNode<Key, Value>* node)
 {
     while (node != this->pRoot && (node == nullptr || node->color == BLACK)) {
         if (node == node->pParent->pLeft) {
-            SRBNode<Key, Value>* brother = node->pParent->pRight;
+            SRBNode<Key, Value>* brother = node->pRBParent->pRBRight;
 
             if (brother->color == RED) {
                 // Случай 1: брат - узла красный
                 brother->color = BLACK;
-                node->pParent->color = RED;
-                LeftRotate(node->pParent);
-                brother = node->pParent->pRight;
+                node->pRBParent->color = RED;
+                LeftRotate(node->pRBParent);
+                brother = node->pRBParent->pRBRight;
             }
 
-            if ((brother->pLeft == nullptr || brother->pLeft->color == BLACK) &&
-                (brother->pRight == nullptr || brother->pRight->color == BLACK)) {
+            if ((brother->pRBLeft == nullptr || brother->pRBLeft->color == BLACK) &&
+                (brother->pRBRight == nullptr || brother->pRBRight->color == BLACK)) {
                 // Случай 2: оба ребенка брата черные
                 brother->color = RED;
-                node = node->pParent;
+                node = node->pRBParent;
             }
             else {
-                if (brother->pRight == nullptr || brother->pRight->color == BLACK) {
+                if (brother->pRBRight == nullptr || brother->pRBRight->color == BLACK) {
                     // Случай 3: правый ребенок брата черный
-                    brother->pLeft->color = BLACK;
+                    brother->pRBLeft->color = BLACK;
                     brother->color = RED;
                     RightRotate(brother);
-                    brother = node->pParent->pRight;
+                    brother = node->pRBParent->pRBRight;
                 }
 
                 // Случай 4: правый ребенок брата красный
-                brother->color = node->pParent->color;
-                node->pParent->color = BLACK;
-                brother->pRight->color = BLACK;
-                LeftRotate(node->pParent);
+                brother->color = node->pRBParent->color;
+                node->pRBParent->color = BLACK;
+                brother->pRBRight->color = BLACK;
+                LeftRotate(node->pRBParent);
                 node = static_cast<SRBNode<Key, Value>*>(this->pRoot);
             }
         }
         else {
-            SRBNode<Key, Value>* brother = node->pParent->pLeft;
+            SRBNode<Key, Value>* brother = node->pRBParent->pRBLeft;
 
             if (brother->color == RED) {
                 brother->color = BLACK;
-                node->pParent->color = RED;
-                RightRotate(node->pParent);
-                brother = node->pParent->pLeft;
+                node->pRBParent->color = RED;
+                RightRotate(node->pRBParent);
+                brother = node->pRBParent->pRBLeft;
             }
 
-            if ((brother->pRight == nullptr || brother->pRight->color == BLACK) &&
-                (brother->pLeft == nullptr || brother->pLeft->color == BLACK)) {
+            if ((brother->pRBRight == nullptr || brother->pRBRight->color == BLACK) &&
+                (brother->pRBLeft == nullptr || brother->pRBLeft->color == BLACK)) {
                 brother->color = RED;
-                node = node->pParent;
+                node = node->pRBParent;
             }
             else {
-                if (brother->pLeft == nullptr || brother->pLeft->color == BLACK) {
+                if (brother->pRBLeft == nullptr || brother->pRBLeft->color == BLACK) {
                     // Случай 3: левый ребенок брата черный
-                    brother->pRight->color = BLACK;
+                    brother->pRBRight->color = BLACK;
                     brother->color = RED;
                     LeftRotate(brother);
-                    brother = node->pParent->pLeft;
+                    brother = node->pRBParent->pRBLeft;
                 }
 
                 // Случай 4: левый ребенок брата красный
-                brother->color = node->pParent->color;
-                node->pParent->color = BLACK;
-                brother->pLeft->color = BLACK;
-                RightRotate(node->pParent);
+                brother->color = node->pRBParent->color;
+                node->pRBParent->color = BLACK;
+                brother->pRBLeft->color = BLACK;
+                RightRotate(node->pRBParent);
                 node = static_cast<SRBNode<Key, Value>*>(this->pRoot);
             }
         }
@@ -184,41 +186,41 @@ void RedBlackTreeTable<Key, Value>::BalanceDeletion(SRBNode<Key, Value>* node)
 }
 
 template<class Key, class Value>
-void RedBlackTreeTable<Key, Value>::LeftRotate(TreeTable<Key, Value>::template SNode<Key, Value>* node)
+void RedBlackTreeTable<Key, Value>::LeftRotate(SRBNode<Key, Value>* node)
 {
     // Левый поворот вокруг узла
-    auto rightChild = node->pRight;
-    node->pRight = rightChild->pLeft;
+    auto rightChild = node->pRBRight;
+    node->SetRight(rightChild->pRBLeft);
 
-    if (rightChild->pLeft != nullptr) { rightChild->pLeft->pParent = node; }
+    if (rightChild->pRBLeft != nullptr) { rightChild->pRBLeft->SetParent(node); }
 
-    rightChild->pParent = node->pParent;
+    rightChild->SetParent(node->pRBParent);
 
-    if (node->pParent == nullptr) { this->pRoot = rightChild; }
-    else if (node == node->pParent->pLeft) { node->pParent->pLeft = rightChild; }
-    else { node->pParent->pRight = rightChild; }
+    if (node->pRBParent == nullptr) { this->pRoot = rightChild; }
+    else if (node == node->pRBParent->pRBLeft) { node->pRBParent->SetLeft(rightChild); }
+    else { node->pRBParent->SetRight(rightChild); }
 
-    rightChild->pLeft = node;
-    node->pParent = rightChild;
+    rightChild->SetLeft(node);
+    node->SetParent(rightChild);
 }
 
 template<class Key, class Value>
-void RedBlackTreeTable<Key, Value>::RightRotate(TreeTable<Key, Value>::template SNode<Key, Value>* node)
+void RedBlackTreeTable<Key, Value>::RightRotate(SRBNode<Key, Value>* node)
 {
     // Правый поворот вокруг узла
-    auto leftChild = node->pLeft;
-    node->pLeft = leftChild->pRight;
+    auto leftChild = node->pRBLeft;
+    node->SetLeft(leftChild->pRBRight);
 
-    if (leftChild->pRight != nullptr) { leftChild->pRight->pParent = node; }
+    if (leftChild->pRBRight != nullptr) { leftChild->pRBRight->SetParent(node); }
 
-    leftChild->pParent = node->pParent;
+    leftChild->SetParent(node->pRBParent);
 
-    if (node->pParent == nullptr) { this->pRoot = leftChild; }
-    else if (node == node->pParent->pRight) { node->pParent->pRight = leftChild; }
-    else { node->pParent->pLeft = leftChild; }
+    if (node->pRBParent == nullptr) { this->pRoot = leftChild; }
+    else if (node == node->pRBParent->pRBRight) { node->pRBParent->SetRight(leftChild); }
+    else { node->pRBParent->SetLeft(leftChild); }
 
-    leftChild->pRight = node;
-    node->pParent = leftChild;
+    leftChild->pRBRight = node;
+    node->pRBParent = leftChild;
 }
 
 

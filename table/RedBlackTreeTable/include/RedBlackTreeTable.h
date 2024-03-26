@@ -24,10 +24,22 @@ protected:
     template <class Key, class Value>
     struct SRBNode : TreeTable<Key, Value>::template SNode<Key, Value> {
         Color color;
-        SRBNode* pParent = nullptr;
-        SRBNode* pLeft = nullptr;
-        SRBNode* pRight = nullptr;
+        SRBNode* pRBParent = nullptr;
+        SRBNode* pRBLeft = nullptr;
+        SRBNode* pRBRight = nullptr;
         SRBNode(Key key, Value value) : TreeTable<Key, Value>::template SNode<Key, Value>(key, value) {}
+        void SetParent(SRBNode* pParent) {
+            pRBParent = pParent;
+            this->pParent = pParent;
+        }
+        void SetLeft(SRBNode* pLeft) {
+            pRBLeft= pLeft;
+            this->pLeft= pLeft;
+        }
+        void SetRight(SRBNode* pRight) {
+            pRBRight = pRight;
+            this->pRight= pRight;
+        }
     };
 
 
@@ -79,13 +91,13 @@ private:
     /// Левый поворот вокруг узла.
     /// </summary>
     /// <param name="node">Узел, вокруг которого происходит поворот.</param>
-    void LeftRotate(TreeTable<Key, Value>::template SNode<Key, Value>* node);
+    void LeftRotate(SRBNode<Key, Value>* node);
 
     /// <summary>
     /// Правый поворот вокруг узла.
     /// </summary>
     /// <param name="node">Узел, вокруг которого происходит поворот.</param>
-    void RightRotate(TreeTable<Key, Value>::template SNode<Key, Value>* node);
+    void RightRotate(SRBNode<Key, Value>* node);
 
 #pragma endregion
 };
